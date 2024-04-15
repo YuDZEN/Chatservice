@@ -34,7 +34,27 @@ public class ServerMsg {
 	// maps pour associer les id aux users et groupes
 	private Map<Integer, UserMsg> users;
 	private Map<Integer, GroupMsg> groups;
-	
+
+	public void processPacket(Packet p) {
+		switch (p.type) {
+			case DELETE_MESSAGE:
+				processDeletion(p);
+				break;
+			case MESSAGE:
+				// Votre logique existante ici
+				break;
+			default:
+				// Logique pour les autres types ou erreur
+				break;
+		}
+	}
+
+	private void processDeletion(Packet p) {
+		int messageId = ByteBuffer.wrap(p.data).getInt();
+		// Supprimez le message de la base de données ou de la structure en mémoire
+		// Notifiez tous les participants que le message a été supprimé
+	}
+}
 	
 	
 	// séquences pour générer les identifiant d'utilisateurs et de groupe

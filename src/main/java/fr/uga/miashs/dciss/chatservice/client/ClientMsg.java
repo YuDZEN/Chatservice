@@ -49,6 +49,18 @@ public class ClientMsg {
 	 * @param address The server address or hostname
 	 * @param port    The port number
 	 */
+	public void sendDeletionRequest(int messageId) {
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		buffer.putInt(messageId);
+		byte[] data = buffer.array();
+		Packet deletePacket = new Packet(identifier, SERVER_CLIENTID, data, Packet.PacketType.DELETE_MESSAGE);
+		sendPacket(deletePacket);
+	}
+
+	private void sendPacket(Packet packet) {
+		// Logique d'envoi de paquet existante
+	}
+}
 	public ClientMsg(int id, String address, int port) {
 		if (id < 0)
 			throw new IllegalArgumentException("id must not be less than 0");
