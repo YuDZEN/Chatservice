@@ -38,7 +38,7 @@ public class GroupMsg implements PacketProcessor {
 	/**
 	 * This method has to be used to add a member to the group.
 	 * It update the bidirectional relationship, i.e. the user is added to the group and the the group is added to the user.
-	 * @param s
+	 * @params
 	 * @return
 	 */
 	public boolean addMember(UserMsg s) {

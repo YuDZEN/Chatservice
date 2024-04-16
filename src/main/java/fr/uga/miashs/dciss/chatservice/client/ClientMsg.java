@@ -41,6 +41,27 @@ public class ClientMsg {
 	private List<MessageListener> mListeners;
 	private List<ConnectionListener> cListeners;
 
+	private Map<Integer, Boolean> messageDeletionStatus = new ConcurrentHashMap<>();
+
+	// Méthode pour supprimer un message localement
+	public void deleteMessageLocally(int messageId) {
+		// Marquer le message comme supprimé
+		messageDeletionStatus.put(messageId, true);
+		updateUI(); // Mettre à jour l'interface utilisateur pour refléter la suppression
+	}
+
+	// Méthode pour mettre à jour l'interface utilisateur
+	private void updateUI() {
+		// Code pour rafraîchir l'affichage des messages, en excluant ceux marqués comme supprimés
+	}
+}
+
+	public void sendClearHistoryRequest() {
+		// Supposons que SERVER_CLIENTID est l'ID utilisé pour les communications avec le serveur
+		Packet clearHistoryPacket = new Packet(identifier, SERVER_CLIENTID, new byte[0], Packet.PacketType.CLEAR_HISTORY);
+		sendPacket(clearHistoryPacket);
+	}
+
 	/**
 	 * Create a client with an existing id, that will connect to the server at the
 	 * given address and port
@@ -49,6 +70,18 @@ public class ClientMsg {
 	 * @param address The server address or hostname
 	 * @param port    The port number
 	 */
+	public void sendDeletionRequest(int messageId) {
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		buffer.putInt(messageId);
+		byte[] data = buffer.array();
+		Packet deletePacket = new Packet(identifier, SERVER_CLIENTID, data, Packet.PacketType.DELETE_MESSAGE);
+		sendPacket(deletePacket);
+	}
+
+	private void sendPacket(Packet packet) {
+		// Logique d'envoi de paquet existante
+	}
+}
 	public ClientMsg(int id, String address, int port) {
 		if (id < 0)
 			throw new IllegalArgumentException("id must not be less than 0");
@@ -219,22 +252,56 @@ public class ClientMsg {
 		
 		
 
-		Scanner sc = new Scanner(System.in);
-		String lu = null;
-		while (!"\\quit".equals(lu)) {
-			try {
-				System.out.println("A qui voulez vous écrire ? ");
-				int dest = Integer.parseInt(sc.nextLine());
-
-				System.out.println("Votre message ? ");
-				lu = sc.nextLine();
-				c.sendPacket(dest, lu.getBytes());
-			} catch (InputMismatchException | NumberFormatException e) {
-				System.out.println("Mauvais format");
+//		Scanner sc = new Scanner(System.in);
+//		String lu = null;
+//		while (!"\\quit".equals(lu)) {
+//			try {
+//				System.out.println("A qui voulez vous écrire ? ");
+//				int dest = Integer.parseInt(sc.nextLine());
+//
+//				System.out.println("Votre message ? ");
+//				lu = sc.nextLine();
+//				c.sendPacket(dest, lu.getBytes());
+//			} catch (InputMismatchException | NumberFormatException e) {
+//				System.out.println("Mauvais format");
+//			}
+//
+//		}
+//		Scanner scanner = new Scanner(System.in);
+//		while (true) {
+//			System.out.print("Enter command or message: ");
+//			String input = scanner.nextLine();
+//			if (input.startsWith("deleteMessage ")) {
+//				int messageId = Integer.parseInt(input.split(" ")[1]);
+//				deleteMessageLocally(messageId);
+//			} else {
+//				// Envoyer un message normal ou autres commandes
+//				sendTextMessage(input);
+//			}
+//		}
+//	}
+		Scanner scanner = new Scanner(System.in);
+		String input = null;
+		while (!"\\quit".equals(input)) {
+			System.out.print("Enter command or message: ");
+			input = scanner.nextLine();
+			if (input.startsWith("deleteMessage ")) {
+				int messageId = Integer.parseInt(input.split(" ")[1]);
+				c.deleteMessageLocally(messageId);
+			} else {
+				try {
+					System.out.println("A qui voulez vous écrire ? ");
+					int dest = Integer.parseInt(scanner.nextLine());
+					if (dest != Integer.parseInt("deleteMessage ")) {
+						System.out.println("Votre message ? ");
+						String message = scanner.nextLine();
+						c.sendPacket(dest, message.getBytes());
+					}
+				} catch (InputMismatchException | NumberFormatException e) {
+					System.out.println("Mauvais format");
+				}
 			}
-
 		}
-
 		/*
 		 * int id =1+(c.getIdentifier()-1) % 2; System.out.println("send to "+id);
 		 * c.sendPacket(id, "bonjour".getBytes());

@@ -31,6 +31,21 @@ public class UserMsg implements PacketProcessor{
 	private transient boolean active;
 	
 	private BlockingQueue<Packet> sendQueue;
+
+	public void process(Packet p) {
+		if (p.type == Packet.PacketType.DELETE_MESSAGE) {
+			// Traiter la suppression du message dans la file d'envoi
+			sendQueue.removeIf(packet -> packetMatchesDeletionCriteria(packet, p));
+		} else {
+			sendQueue.offer(p);
+		}
+	}
+
+	private boolean packetMatchesDeletionCriteria(Packet packet, Packet deletePacket) {
+		// Logique pour identifier si le packet doit être supprimé
+		return false; // Implémentez votre propre logique ici
+	}
+}
 	
 	public UserMsg(int clientId, ServerMsg server) {
 		if (clientId<1) throw new IllegalArgumentException("id must not be less than 0");

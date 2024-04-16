@@ -19,13 +19,16 @@ public class Packet {
 	public final int srcId;
 	public final int destId;
 	public final byte[] data;
-	
-	public Packet(int srcId, int destId, byte[] data) {
-		super();
+	public final PacketType type; // Ajout pour gérer différents types de paquets
+
+	public enum PacketType {
+		MESSAGE, DELETE_MESSAGE // Ajout d'un type pour suppression
+	}
+
+	public Packet(int srcId, int destId, byte[] data, PacketType type) {
 		this.srcId = srcId;
 		this.destId = destId;
 		this.data = data;
+		this.type = type;
 	}
-	
-	
 }
