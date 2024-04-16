@@ -43,9 +43,13 @@ public class ServerMsg {
 			case MESSAGE:
 				// Votre logique existante ici
 				break;
+			case CLEAR_HISTORY:
+				processClearHistory(p.srcId);
+				break;
 			default:
 				// Logique pour les autres types ou erreur
 				break;
+
 		}
 	}
 
@@ -148,7 +152,7 @@ public class ServerMsg {
 				// une pour envoyer des messages au client
 				// les deux boucles sont gérées au niveau de la classe UserMsg
 				UserMsg x = users.get(userId);
-				if (x.open(s)) {
+				if (x!= null && x.open(s)) {
 					LOG.info(userId + " connected");
 					// lancement boucle de reception
 					executor.submit(() -> x.receiveLoop());
@@ -181,4 +185,10 @@ public class ServerMsg {
 		s.start();
 	}
 
+}
+private void processClearHistory(int userId) {
+	// Logique pour effacer l'historique des messages de l'utilisateur
+	// Cela pourrait impliquer de supprimer les messages de la base de données ou de la mémoire
+	// Notifiez aussi tous les clients nécessaires que l'historique a été effacé
+}
 }
