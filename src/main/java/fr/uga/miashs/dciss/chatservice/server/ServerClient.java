@@ -29,43 +29,50 @@ public class ServerClient extends JFrame {
         serverClient.createJFrame();
     }
 
+    UserDao userDao = new UserDao();
+
     public void createJFrame() {
-        JLabel jLabel = new JLabel("Server", JLabel.CENTER);
+        JLabel jLabel = new JLabel("Le serveur est en place, il écoute sur le port 8080 et attend que le client se connecte.", JLabel.CENTER);
         this.add(jLabel, BorderLayout.CENTER);
 
         // 由于 ServerClient 是 JFrame 的子类，我们可以使用 this 来设置 JFrame 的属性
         this.setTitle("Server");
-        this.setBounds(505, 300, 350, 250);
+        this.setBounds(505, 300, 800, 400);
         this.setVisible(true);
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //创建服务端界面时启动服务端
+        try {
+            this.server();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 服务器端连接方法
     public void server() throws Exception {
         ServerSocket serverSocket = new ServerSocket(8080);//服务监听在8080端口
-        Socket socket = serverSocket.accept();//等待客户端连接
+        while(true){
+            Socket socket = serverSocket.accept();//等待客户端连接
 
-        // 服务器端接收消息
-        InputStream inputStream = socket.getInputStream();
-        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-        User user = (User) objectInputStream.readObject();
+            // 服务器端接收消息
+            InputStream inputStream = socket.getInputStream();
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            User user = (User) objectInputStream.readObject();
 
 
-        Message message = new Message();
-        if(user.getUsername().equals("admin") && user.getPassword().equals("admin")){
-            message.setMessageType(MessageType.LOGIN_SUCCESS);
-        } else {
-            message.setMessageType(MessageType.LOGIN_FAIL);
+            Message message = new Message();
+            if(userDao.login(user.getUsername(), user.getPassword())!=null){
+                message.setMessageType(MessageType.LOGIN_SUCCESS);
+            } else {
+                message.setMessageType(MessageType.LOGIN_FAIL);
+            }
+
+            //向客户端输出验证结果
+            OutputStream outputStream = socket.getOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+            objectOutputStream.writeObject(message);
         }
-
-        //向客户端输出验证结果
-        OutputStream outputStream = socket.getOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(message);
-
-
     }
-
-
 }
