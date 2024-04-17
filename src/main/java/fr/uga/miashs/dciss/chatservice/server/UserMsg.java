@@ -22,16 +22,16 @@ import java.util.*;
 
 public class UserMsg implements PacketProcessor{
 	private final static Logger LOG = Logger.getLogger(UserMsg.class.getName());
-	
+
 	private int userId;
 	private Set<GroupMsg> groups;
-	
+
 	private ServerMsg server;
 	private transient Socket s;
 	private transient boolean active;
-	
+
 	private BlockingQueue<Packet> sendQueue;
-	
+
 	public UserMsg(int clientId, ServerMsg server) {
 		if (clientId<1) throw new IllegalArgumentException("id must not be less than 0");
 		this.server=server;
@@ -40,11 +40,11 @@ public class UserMsg implements PacketProcessor{
 		sendQueue = new LinkedBlockingQueue<>();
 		groups = Collections.synchronizedSet(new HashSet<>());
 	}
-	
+
 	public int getId() {
 		return userId;
 	}
-	
+
 	public boolean removeGroup(GroupMsg g) {
 		if (groups.remove(g)) {
 			g.removeMember(this);
@@ -52,21 +52,21 @@ public class UserMsg implements PacketProcessor{
 		}
 		return false;
 	}
-	
+
 	// to be used carrefully, do not add groups directly
 	protected Set<GroupMsg> getGroups() {
 		return groups;
 	}
-	
+
 	/*
 	 * This method has to be called before removing a group in order to clean membership.
 	 */
 	public void beforeDelete() {
 		groups.forEach(g->g.getMembers().remove(this));
-		
+
 	}
-	
-	
+
+
 	/*
 	 * METHODS FOR MANAING THE CONNECTION
 	 */
@@ -76,7 +76,7 @@ public class UserMsg implements PacketProcessor{
 		active=true;
 		return true;
 	}
-	
+
 	public void close() {
 		active=false;
 		try {
@@ -88,11 +88,11 @@ public class UserMsg implements PacketProcessor{
 		s=null;
 		LOG.info(userId + " deconnected");
 	}
-	
+
 	public boolean isConnected() {
 		return s!=null;
 	}
-	
+
 	// boucle d'envoie
 	public void receiveLoop() {
 		try {
@@ -107,14 +107,14 @@ public class UserMsg implements PacketProcessor{
 				// on envoie le paquet à ServerMsg pour qu'il le gère
 				server.processPacket(new Packet(userId,destId,content));
 			}
-			
+
 		} catch (IOException e) {
 			// problem in reading, probably end connection
 			LOG.warning("Connection with client "+userId+" is broken...close it.");
 		}
 		close();
 	}
-	
+
 	// boucle d'envoi
 	public void sendLoop() {
 		Packet p = null;
@@ -131,7 +131,7 @@ public class UserMsg implements PacketProcessor{
 				dos.writeInt(p.data.length);
 				dos.write(p.data);
 				dos.flush();
-				
+
 			}
 		} catch (IOException e) {
 			// remet le paquet dans la file si pb de transmission (connexion terminée)
@@ -143,7 +143,7 @@ public class UserMsg implements PacketProcessor{
 		}
 		close();
 	}
-	
+
 	/**
 	 * Method for adding a packet to the sending queue
 	 */
@@ -151,5 +151,5 @@ public class UserMsg implements PacketProcessor{
 	public void process(Packet p) {
 		sendQueue.offer(p);
 	}
-	
+
 }
