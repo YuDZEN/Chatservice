@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost/chat_service";
     private static final String USER = "AdminChat";
@@ -70,6 +71,21 @@ public class DatabaseManager {
 
         return false; // S'il n'y a pas de lignes trouvées, les identifiants sont invalides
     }
+
+    public static int getUserIdByUsername(String username) throws SQLException {
+        String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id"); // Renvoie l'ID de l'utilisateur si le nom d'utilisateur est trouvé
+                }
+            }
+        }
+        throw new SQLException("Le nom d'utilisateur n'existe pas"); // Lance une exception si le nom d'utilisateur n'est pas trouvé
+
+
 
 
     // Autres méthodes pour gérer les transactions, fermer les ressources, etc., selon les besoins
