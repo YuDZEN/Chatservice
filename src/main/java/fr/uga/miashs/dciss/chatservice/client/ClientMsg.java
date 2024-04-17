@@ -153,6 +153,21 @@ public class ClientMsg {
 		
 	}
 
+	public void sendFile(int destId, File file) {
+		try {
+			FileInputStream fis = new FileInputStream(file); // Create a FileInputStream to read the file
+			byte[] buffer = new byte[1024]; // Create a buffer (byte array) to store the file content, 1024 bytes at a time
+			int length; // Variable to store the number of bytes read from the file
+			while ((length = fis.read(buffer)) != -1) { // Read the file content into the buffer
+				sendPacket(destId, buffer); // Send the buffer to the server
+			}
+			fis.close(); // Close the FileInputStream
+		} catch (IOException e) {
+			// error, connection closed
+			closeSession();
+		}
+	}
+
 	/**
 	 * Start the receive loop. Has to be called only once.
 	 */
