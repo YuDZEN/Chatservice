@@ -1,28 +1,19 @@
-/*
- * Copyright (c) 2024.  Jerome David. Univ. Grenoble Alpes.
- * This file is part of DcissChatService.
- *
- * DcissChatService is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- *
- * DcissChatService is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>.
- */
-
 package fr.uga.miashs.dciss.chatservice.client;
-
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.UnknownHostException;
 
 public class ChatWindow extends JFrame {
     private JTextArea chatArea;
     private JTextField messageField;
     private JButton sendButton;
+    private ClientMsg client;
 
-    public ChatWindow(int userId) {
+    public ChatWindow(int userId, ClientMsg client) {
+        this.client = client;
         setTitle("Chat - User " + userId);
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,8 +33,7 @@ public class ChatWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String message = messageField.getText();
-                // Aquí puedes agregar el código para enviar el mensaje al servidor
-                // client.sendMessage(userId, message);
+                client.sendPacket(0, message.getBytes()); // Envía el mensaje al servidor
                 appendMessage("You", message);
                 messageField.setText("");
             }
@@ -63,14 +53,19 @@ public class ChatWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Ejemplo de cómo crear y mostrar la ventana de chat
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ChatWindow chatWindow = new ChatWindow(123); // Pasar el ID de usuario según sea necesario
-                chatWindow.setVisible(true);
+                try {
+                    ClientMsg client = new ClientMsg("localhost", 1666);
+                    client.startSession();
+
+                    ChatWindow chatWindow = new ChatWindow(client.getIdentifier(), client);
+                    chatWindow.setVisible(true);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 }
-

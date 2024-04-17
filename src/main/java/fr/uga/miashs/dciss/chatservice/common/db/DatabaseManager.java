@@ -83,7 +83,7 @@ public class DatabaseManager {
                 }
             }
         }
-        throw new SQLException("El nombre de usuario no existe"); // Lanza una excepción si no se encuentra el nombre de usuario
+        throw new SQLException("Le nom d'utilisateur n'existe pas"); // Lanza una excepción si no se encuentra el nombre de usuario
     }
 
 

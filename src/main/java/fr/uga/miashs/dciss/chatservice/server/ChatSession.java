@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-
 import fr.uga.miashs.dciss.chatservice.client.ClientMsg;
 import fr.uga.miashs.dciss.chatservice.common.db.DatabaseManager;
 import fr.uga.miashs.dciss.chatservice.client.ChatWindow;
@@ -65,7 +64,9 @@ public class ChatSession extends JFrame {
                 try {
                     int userId = DatabaseManager.getUserIdByUsername(username); // Obtener el ID de usuario
                     JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
-                    ChatWindow chatWindow = new ChatWindow(userId); // Crear la ventana del chat con el ID de usuario
+                    ClientMsg client = new ClientMsg("localhost", 1666); // Crear el cliente
+                    client.startSession(); // Iniciar la sesión
+                    ChatWindow chatWindow = new ChatWindow(userId, client); // Crear la ventana del chat con el ID de usuario y el cliente
                     chatWindow.setVisible(true);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -77,7 +78,6 @@ public class ChatSession extends JFrame {
             }
         });
 
-
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -85,7 +85,6 @@ public class ChatSession extends JFrame {
                 registerDialog.setVisible(true); // Muestra el diálogo de registro
             }
         });
-
 
         loginPanel.add(usernameLabel);
         loginPanel.add(usernameField);
