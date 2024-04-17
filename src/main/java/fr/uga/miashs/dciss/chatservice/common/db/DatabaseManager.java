@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost/Chat_Service";
     private static final String USER = "AdminChat";
@@ -58,7 +59,7 @@ public class DatabaseManager {
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
-            statement.setString(2, String.valueOf(password)); // Convertir el char[] a String
+            statement.setString(2, new String(password)); // Establecer la contraseña como un String
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -70,6 +71,22 @@ public class DatabaseManager {
 
         return false; // Si no se encontraron filas, las credenciales son inválidas
     }
+
+    public static int getUserIdByUsername(String username) throws SQLException {
+        String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id"); // Devuelve el ID de usuario si se encuentra el nombre de usuario
+                }
+            }
+        }
+        throw new SQLException("El nombre de usuario no existe"); // Lanza una excepción si no se encuentra el nombre de usuario
+    }
+
+
 
 
     // Otros métodos para manejar transacciones, cierre de recursos, etc., según sea necesario

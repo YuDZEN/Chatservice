@@ -4,23 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.UnknownHostException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-
 
 
 import fr.uga.miashs.dciss.chatservice.client.ClientMsg;
 import fr.uga.miashs.dciss.chatservice.common.db.DatabaseManager;
+import fr.uga.miashs.dciss.chatservice.client.ChatWindow;
 
 public class ChatSession extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton;
-    private JTextArea messageArea;
-    private JTextField inputField;
-    private ClientMsg client;
 
     public ChatSession() {
         setTitle("Chat Service");
@@ -62,34 +57,22 @@ public class ChatSession extends JFrame {
                 String username = usernameField.getText();
                 char[] password = passwordField.getPassword();
 
-                // Verificar si los campos de texto están vacíos
                 if (username.isEmpty() || password.length == 0) {
                     JOptionPane.showMessageDialog(ChatSession.this, "Por favor, ingrese un nombre de usuario y contraseña.");
                     return;
                 }
 
                 try {
-                    // Construir la consulta SQL para verificar las credenciales del usuario
-                    String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ? AND mot_de_passe_hash = ?";
-                    ResultSet resultSet = DatabaseManager.executeQuery(query, username, new String(password));
-
-                    if (resultSet.next()) {
-                        // Inicio de sesión exitoso
-                        int userId = resultSet.getInt("id");
-                        JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
-
-                        // Aquí puedes abrir una nueva ventana o realizar otras acciones después del inicio de sesión
-                        // Por ejemplo, podrías crear una instancia de tu clase ChatWindow y mostrarla
-                        // ChatWindow chatWindow = new ChatWindow(userId);
-                        // chatWindow.setVisible(true);
-                    } else {
-                        // Credenciales incorrectas
-                        JOptionPane.showMessageDialog(ChatSession.this, "Credenciales incorrectas. Por favor, inténtelo de nuevo.");
-                    }
+                    int userId = DatabaseManager.getUserIdByUsername(username); // Obtener el ID de usuario
+                    JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
+                    ChatWindow chatWindow = new ChatWindow(userId); // Crear la ventana del chat con el ID de usuario
+                    chatWindow.setVisible(true);
                 } catch (SQLException ex) {
-                    // Manejar cualquier excepción de la base de datos
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Error al iniciar sesión. Inténtalo de nuevo.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(ChatSession.this, "Error al obtener el ID de usuario. Inténtalo de nuevo.");
                 }
             }
         });
@@ -117,6 +100,10 @@ public class ChatSession extends JFrame {
         add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrar el texto
     }
 
+    private String hashPassword(char[] password) {
+        // Implementa tu lógica de hash aquí (por ejemplo, usando bcrypt o PBKDF2)
+        return ""; // Devuelve el hash de la contraseña
+    }
 
     public static void main(String[] args) {
         ChatSession chatSession = new ChatSession();
