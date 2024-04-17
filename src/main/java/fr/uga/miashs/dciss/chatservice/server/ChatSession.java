@@ -63,13 +63,9 @@ public class ChatSession extends JFrame {
                 }
 
                 try {
-                    int userId = DatabaseManager.getUserIdByUsername(username); // Obtenir l’ID de l’utilisateur
-                    JOptionPane.showMessageDialog(ChatSession.this, "Connectez-vous avec succès!");
-                    ChatWindow chatWindow = new ChatWindow(userId); // Créer la fenêtre de chat avec l’ID utilisateur
+                    JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
+                    ChatWindow chatWindow = new ChatWindow(username); // Créer la fenêtre de chat avec l’ID utilisateur
                     chatWindow.setVisible(true);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Informations d’identification incorrectes. Veuillez réessayer.");
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");

@@ -22,8 +22,8 @@ public class ChatWindow extends JFrame {
     private JTextField messageField;
     private JButton sendButton;
 
-    public ChatWindow(int userId) {
-        setTitle("Chat - User " + userId);
+    public ChatWindow(String nom_utilisateur) {
+        setTitle("Chat - User : " + nom_utilisateur);
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -36,17 +36,26 @@ public class ChatWindow extends JFrame {
 
         JPanel messagePanel = new JPanel(new BorderLayout());
         messageField = new JTextField();
-        sendButton = new JButton("Send");
+        sendButton = new JButton("Envoyer");
 
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String message = messageField.getText();
-                // Aquí puedes agregar el código para enviar el mensaje al servidor
+                // Ici, vous pouvez ajouter le code pour envoyer le message au serveur
                 // client.sendMessage(userId, message);
                 appendMessage("You", message);
                 messageField.setText("");
             }
+        });
+
+        // Ajouter un ActionListener à messageField
+        messageField.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Simuler un clic sur sendButton lorsque la touche Enter est pressée
+            sendButton.doClick();
+        }
         });
 
         messagePanel.add(messageField, BorderLayout.CENTER);
@@ -63,11 +72,11 @@ public class ChatWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Ejemplo de cómo crear y mostrar la ventana de chat
+        // Exemple de comment créer et afficher la fenêtre de chat
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ChatWindow chatWindow = new ChatWindow(123); // Pasar el ID de usuario según sea necesario
+                ChatWindow chatWindow = new ChatWindow("lainean"); // Passer l'ID de l'utilisateur selon les besoins
                 chatWindow.setVisible(true);
             }
         });

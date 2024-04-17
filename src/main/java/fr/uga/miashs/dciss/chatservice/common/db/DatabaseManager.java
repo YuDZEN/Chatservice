@@ -107,5 +107,22 @@ public class DatabaseManager {
 
 
     // Autres méthodes pour gérer les transactions, fermer les ressources, etc., selon les besoins
-}
+    }
+    public static String getUsernameById(int userId) throws SQLException {
+        // Requête SQL pour obtenir le nom d'utilisateur
+        String query = "SELECT nom_utilisateur FROM Utilisateurs WHERE id = ?";
+    
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, userId);
+    
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("nom_utilisateur");
+                }
+            }
+        }
+    
+        return null; // Retourne null si aucun utilisateur avec cet ID n'a été trouvé
+    }
 }
