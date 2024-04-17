@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.UnknownHostException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
 
 
 import fr.uga.miashs.dciss.chatservice.client.ClientMsg;
@@ -57,9 +59,41 @@ public class ChatSession extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Código para verificar credenciales...
+                String username = usernameField.getText();
+                char[] password = passwordField.getPassword();
+
+                // Verificar si los campos de texto están vacíos
+                if (username.isEmpty() || password.length == 0) {
+                    JOptionPane.showMessageDialog(ChatSession.this, "Por favor, ingrese un nombre de usuario y contraseña.");
+                    return;
+                }
+
+                try {
+                    // Construir la consulta SQL para verificar las credenciales del usuario
+                    String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ? AND mot_de_passe_hash = ?";
+                    ResultSet resultSet = DatabaseManager.executeQuery(query, username, new String(password));
+
+                    if (resultSet.next()) {
+                        // Inicio de sesión exitoso
+                        int userId = resultSet.getInt("id");
+                        JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
+
+                        // Aquí puedes abrir una nueva ventana o realizar otras acciones después del inicio de sesión
+                        // Por ejemplo, podrías crear una instancia de tu clase ChatWindow y mostrarla
+                        // ChatWindow chatWindow = new ChatWindow(userId);
+                        // chatWindow.setVisible(true);
+                    } else {
+                        // Credenciales incorrectas
+                        JOptionPane.showMessageDialog(ChatSession.this, "Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+                    }
+                } catch (SQLException ex) {
+                    // Manejar cualquier excepción de la base de datos
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(ChatSession.this, "Error al iniciar sesión. Inténtalo de nuevo.");
+                }
             }
         });
+
 
         registerButton.addActionListener(new ActionListener() {
             @Override
