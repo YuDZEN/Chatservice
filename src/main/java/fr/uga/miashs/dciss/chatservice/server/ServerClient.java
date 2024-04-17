@@ -37,7 +37,7 @@ public class ServerClient extends JFrame {
 
         // 由于 ServerClient 是 JFrame 的子类，我们可以使用 this 来设置 JFrame 的属性
         this.setTitle("Server");
-        this.setBounds(505, 300, 800, 400);
+        this.setBounds(505, 300, 600, 280);
         this.setVisible(true);
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
