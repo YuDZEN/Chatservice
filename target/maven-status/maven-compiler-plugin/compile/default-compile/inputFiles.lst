@@ -1,0 +1,11 @@
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/PacketProcessor.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/common/Packet.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/UserMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/ChatApp.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ClientMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerPacketProcessor.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ConnectionListener.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/GroupMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/MessageListener.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerException.java

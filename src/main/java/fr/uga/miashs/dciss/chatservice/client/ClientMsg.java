@@ -15,9 +15,9 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import fr.uga.miashs.dciss.chatservice.common.Packet;
+
 
 /**
  * Manages the connection to a ServerMsg. Method startSession() is used to
@@ -152,6 +152,7 @@ public class ClientMsg {
 		}
 		
 	}
+
 
 	/**
 	 * Start the receive loop. Has to be called only once.

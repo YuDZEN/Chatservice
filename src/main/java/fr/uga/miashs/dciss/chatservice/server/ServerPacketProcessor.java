@@ -29,14 +29,14 @@ public class ServerPacketProcessor implements PacketProcessor {
 		// ByteBufferVersion. On aurait pu utiliser un ByteArrayInputStream + DataInputStream à la place
 		ByteBuffer buf = ByteBuffer.wrap(p.data);
 		byte type = buf.get();
-		
+
 		if (type == 1) { // cas creation de groupe
 			createGroup(p.srcId,buf);
 		} else {
 			LOG.warning("Server message of type=" + type + " not handled by procesor");
 		}
 	}
-	
+
 	public void createGroup(int ownerId, ByteBuffer data) {
 		int nb = data.getInt();
 		GroupMsg g = server.createGroup(ownerId);
