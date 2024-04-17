@@ -23,7 +23,7 @@ public class ChatWindow extends JFrame {
     private JButton sendButton;
 
     public ChatWindow(int userId) {
-        setTitle("Chat Window");
+        setTitle("Chat - User " + userId);
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
