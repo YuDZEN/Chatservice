@@ -53,27 +53,33 @@ public class RegisterDialog extends JDialog {
                 }
 
                 // Autres validations (vous pouvez en ajouter plus selon vos besoins)
-
                 try {
-                    // Construire la requête SQL d'insertion
-                    String insertQuery = "INSERT INTO Utilisateurs (nom_utilisateur, mot_de_passe_hash, email) VALUES (?, ?, ?)";
-
-                    // Exécuter la requête SQL
-                    int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, new String(password), email);
-
-                    if (rowsAffected > 0) {
-                        // Enregistrement réussi
-                        JOptionPane.showMessageDialog(RegisterDialog.this, "Enregistrement réussi !");
-                        dispose(); // Ferme la boîte de dialogue
+                    // Vérifier si le nom d'utilisateur existe déjà
+                    if (DatabaseManager.usernameExists(username)) {
+                        // Informer l'utilisateur que le nom d'utilisateur est déjà pris
+                        JOptionPane.showMessageDialog(RegisterDialog.this, "Le nom d'utilisateur est déjà pris. Veuillez choisir un autre nom d'utilisateur.");
                     } else {
-                        // Échec de l'enregistrement
-                        JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
+                        // Construire la requête SQL d'insertion
+                        String insertQuery = "INSERT INTO Utilisateurs (nom_utilisateur, mot_de_passe_hash, email) VALUES (?, ?, ?)";
+                
+                        // Exécuter la requête SQL
+                        int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, new String(password), email);
+                
+                        if (rowsAffected > 0) {
+                            // Enregistrement réussi
+                            JOptionPane.showMessageDialog(RegisterDialog.this, "Enregistrement réussi !");
+                            dispose(); // Ferme la boîte de dialogue
+                        } else {
+                            // Échec de l'enregistrement
+                            JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
+                        }
                     }
                 } catch (SQLException ex) {
-                    // Manejar cualquier excepción de la base de datos
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
+                        // Gérer toute exception de la base de données
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
                 }
+                
             }
         });
 

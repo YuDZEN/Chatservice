@@ -63,16 +63,16 @@ public class ChatSession extends JFrame {
                 }
 
                 try {
-                    int userId = DatabaseManager.getUserIdByUsername(username); // Obtener el ID de usuario
-                    JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
-                    ChatWindow chatWindow = new ChatWindow(userId); // Crear la ventana del chat con el ID de usuario
+                    int userId = DatabaseManager.getUserIdByUsername(username); // Obtenir l’ID de l’utilisateur
+                    JOptionPane.showMessageDialog(ChatSession.this, "Connectez-vous avec succès!");
+                    ChatWindow chatWindow = new ChatWindow(userId); // Créer la fenêtre de chat avec l’ID utilisateur
                     chatWindow.setVisible(true);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Informations d’identification incorrectes. Veuillez réessayer.");
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Error al obtener el ID de usuario. Inténtalo de nuevo.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");
                 }
             }
         });
@@ -101,8 +101,8 @@ public class ChatSession extends JFrame {
     }
 
     private String hashPassword(char[] password) {
-        // Implementa tu lógica de hash aquí (por ejemplo, usando bcrypt o PBKDF2)
-        return ""; // Devuelve el hash de la contraseña
+        // Implémentez votre logique de hachage ici (par exemple, en utilisant bcrypt ou PBKDF2)
+        return ""; // Retourne le hachage du mot de passe
     }
 
     public static void main(String[] args) {

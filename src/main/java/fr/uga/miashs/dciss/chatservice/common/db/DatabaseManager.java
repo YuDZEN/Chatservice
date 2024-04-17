@@ -52,6 +52,24 @@ public class DatabaseManager {
             return statement.executeUpdate();
         }
     }
+    public static boolean usernameExists(String username) throws SQLException {
+        // Requête SQL pour vérifier l'existence du nom d'utilisateur
+        String query = "SELECT COUNT(*) FROM Utilisateurs WHERE nom_utilisateur = ?";
+    
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, username);
+    
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count >= 1; // S'il y a une ligne avec le nom d'utilisateur fourni, retourne vrai
+                }
+            }
+        }
+    
+        return false; // S'il n'y a pas de lignes trouvées, le nom d'utilisateur n'existe pas
+    }
     public static boolean verifyCredentials(String username, char[] password) throws SQLException {
         // Requête SQL pour vérifier les identifiants de l'utilisateur
         String query = "SELECT COUNT(*) FROM Utilisateurs WHERE nom_utilisateur = ? AND mot_de_passe_hash = ?";
@@ -64,7 +82,7 @@ public class DatabaseManager {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     int count = resultSet.getInt(1);
-                    return count == 1; // S'il y a une ligne avec les identifiants fournis, retourne vrai
+                    return count >= 1; // S'il y a une ligne avec les identifiants fournis, retourne vrai
                 }
             }
         }
@@ -89,4 +107,5 @@ public class DatabaseManager {
 
 
     // Autres méthodes pour gérer les transactions, fermer les ressources, etc., selon les besoins
+}
 }
