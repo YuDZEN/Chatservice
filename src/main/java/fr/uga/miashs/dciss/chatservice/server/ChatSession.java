@@ -28,7 +28,7 @@ public class ChatSession extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel loginPanel = new JPanel(new GridLayout(4, 2, 5, 5)); // Agregar un espacio entre filas y columnas
+        JPanel loginPanel = new JPanel(new GridLayout(4, 2, 5, 5)); // Ajouter un espace entre les lignes et les colonnes
 
         JLabel usernameLabel = new JLabel("Username:");
         JLabel passwordLabel = new JLabel("Password:");
@@ -37,23 +37,23 @@ public class ChatSession extends JFrame {
         loginButton = new JButton("Login");
         registerButton = new JButton("Register");
 
-        // Establecer un tamaño preferido para los campos de texto y los botones
+        // Définir une taille préférée pour les champs de texte et les boutons
         usernameField.setPreferredSize(new Dimension(150, 25));
         passwordField.setPreferredSize(new Dimension(150, 25));
         loginButton.setPreferredSize(new Dimension(100, 25));
         registerButton.setPreferredSize(new Dimension(100, 25));
 
-        // Establecer un estilo para los botones
+        // Définir un style pour les boutons
         loginButton.setBackground(Color.BLUE);
         loginButton.setForeground(Color.BLACK);
         registerButton.setBackground(Color.GRAY);
         registerButton.setForeground(Color.BLACK);
 
-        // Establecer un estilo para los labels
+        // Définir un style pour les labels
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         passwordLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Agregar espacio adicional al panel de login
+        // Ajouter un espace supplémentaire au panneau de connexion
         loginPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         loginButton.addActionListener(new ActionListener() {
@@ -62,34 +62,34 @@ public class ChatSession extends JFrame {
                 String username = usernameField.getText();
                 char[] password = passwordField.getPassword();
 
-                // Verificar si los campos de texto están vacíos
+                //  Vérifier si les champs de texte sont vides
                 if (username.isEmpty() || password.length == 0) {
-                    JOptionPane.showMessageDialog(ChatSession.this, "Por favor, ingrese un nombre de usuario y contraseña.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Veuillez entrer un nom d'utilisateur et un mot de passe.");
                     return;
                 }
 
                 try {
-                    // Construir la consulta SQL para verificar las credenciales del usuario
+                    // Construire la requête SQL pour vérifier les identifiants de l'utilisateur
                     String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ? AND mot_de_passe_hash = ?";
                     ResultSet resultSet = DatabaseManager.executeQuery(query, username, new String(password));
 
                     if (resultSet.next()) {
-                        // Inicio de sesión exitoso
+                        // Connexion réussie
                         int userId = resultSet.getInt("id");
-                        JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
+                        JOptionPane.showMessageDialog(ChatSession.this, "Connexion réussie!");
 
-                        // Aquí puedes abrir una nueva ventana o realizar otras acciones después del inicio de sesión
-                        // Por ejemplo, podrías crear una instancia de tu clase ChatWindow y mostrarla
+                        // Ici, vous pouvez ouvrir une nouvelle fenêtre ou effectuer d'autres actions après la connexion
+                        // Par exemple, vous pourriez créer une instance de votre classe ChatWindow et l'afficher
                         // ChatWindow chatWindow = new ChatWindow(userId);
                         // chatWindow.setVisible(true);
                     } else {
-                        // Credenciales incorrectas
-                        JOptionPane.showMessageDialog(ChatSession.this, "Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+                        // Identifiants incorrects
+                        JOptionPane.showMessageDialog(ChatSession.this, "Identifiants incorrects. Veuillez réessayer.");
                     }
                 } catch (SQLException ex) {
-                    // Manejar cualquier excepción de la base de datos
+                    // Gérer toute exception de la base de données
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Error al iniciar sesión. Inténtalo de nuevo.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Erreur lors de la connexion. Veuillez réessayer.");
                 }
             }
         });
@@ -99,7 +99,7 @@ public class ChatSession extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 RegisterDialog registerDialog = new RegisterDialog(ChatSession.this);
-                registerDialog.setVisible(true); // Muestra el diálogo de registro
+                registerDialog.setVisible(true); // Affiche la boîte de dialogue d'enregistrement
             }
         });
 
@@ -108,13 +108,13 @@ public class ChatSession extends JFrame {
         loginPanel.add(usernameField);
         loginPanel.add(passwordLabel);
         loginPanel.add(passwordField);
-        loginPanel.add(new JLabel()); // Espacio vacío
+        loginPanel.add(new JLabel()); // Espace vide
         loginPanel.add(loginButton);
-        loginPanel.add(new JLabel()); // Espacio vacío
+        loginPanel.add(new JLabel()); // Espace vide
         loginPanel.add(registerButton);
 
         add(loginPanel, BorderLayout.CENTER);
-        add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrar el texto
+        add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrer le texte
     }
 
 
