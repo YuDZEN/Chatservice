@@ -32,10 +32,10 @@ public class ChatSession extends JFrame {
         registerButton = new JButton("Register");
 
         // Establecer un tamaño preferido para los campos de texto y los botones
-        usernameField.setPreferredSize(new Dimension(150, 25));
-        passwordField.setPreferredSize(new Dimension(150, 25));
-        loginButton.setPreferredSize(new Dimension(100, 25));
-        registerButton.setPreferredSize(new Dimension(100, 25));
+        usernameField.setPreferredSize(new Dimension(150, 30));
+        passwordField.setPreferredSize(new Dimension(150, 30));
+        loginButton.setPreferredSize(new Dimension(100, 30));
+        registerButton.setPreferredSize(new Dimension(100, 30));
 
         // Establecer un estilo para los botones
         loginButton.setBackground(Color.BLUE);
@@ -57,23 +57,23 @@ public class ChatSession extends JFrame {
                 char[] password = passwordField.getPassword();
 
                 if (username.isEmpty() || password.length == 0) {
-                    JOptionPane.showMessageDialog(ChatSession.this, "Por favor, ingrese un nombre de usuario y contraseña.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Veuillez entrer un nom d'utilisateur et un mot de passe.");
                     return;
                 }
 
                 try {
                     int userId = DatabaseManager.getUserIdByUsername(username); // Obtener el ID de usuario
-                    JOptionPane.showMessageDialog(ChatSession.this, "Inicio de sesión exitoso!");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
                     ClientMsg client = new ClientMsg("localhost", 1666); // Crear el cliente
                     client.startSession(); // Iniciar la sesión
-                    ChatWindow chatWindow = new ChatWindow(userId, client); // Crear la ventana del chat con el ID de usuario y el cliente
+                    ChatWindow chatWindow = new ChatWindow(username, client); // Crear la ventana del chat con el ID de usuario y el cliente
                     chatWindow.setVisible(true);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Nom d'utilisateur ou mot de passe incorrect.");
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Error al obtener el ID de usuario. Inténtalo de nuevo.");
+                    JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");
                 }
             }
         });
@@ -105,7 +105,12 @@ public class ChatSession extends JFrame {
     }
 
     public static void main(String[] args) {
-        ChatSession chatSession = new ChatSession();
-        chatSession.setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ChatSession chatSession = new ChatSession();
+                chatSession.setVisible(true);
+            }
+        });
     }
 }

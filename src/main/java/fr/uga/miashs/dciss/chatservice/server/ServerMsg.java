@@ -22,7 +22,7 @@ import fr.uga.miashs.dciss.chatservice.common.Packet;
 import java.util.*;
 
 public class ServerMsg {
-	
+
 	private final static Logger LOG = Logger.getLogger(ServerMsg.class.getName());
 	public final static int SERVER_CLIENTID = 0;
 
@@ -30,13 +30,13 @@ public class ServerMsg {
 	private transient boolean started;
 	private transient ExecutorService executor;
 	private transient ServerPacketProcessor sp;
-	
+
 	// maps pour associer les id aux users et groupes
 	private Map<Integer, UserMsg> users;
 	private Map<Integer, GroupMsg> groups;
-	
-	
-	
+
+
+
 	// séquences pour générer les identifiant d'utilisateurs et de groupe
 	private AtomicInteger nextUserId;
 	private AtomicInteger nextGroupId;
@@ -45,13 +45,13 @@ public class ServerMsg {
 		serverSock = new ServerSocket(port);
 		started = false;
 		users = new ConcurrentHashMap<>();
-		groups = new ConcurrentHashMap<>(); 
+		groups = new ConcurrentHashMap<>();
 		nextUserId = new AtomicInteger(1);
 		nextGroupId = new AtomicInteger(-1);
 		sp = new ServerPacketProcessor(this);
 		executor = Executors.newCachedThreadPool();
 	}
-	
+
 	public GroupMsg createGroup(int ownerId) {
 		UserMsg owner = users.get(ownerId);
 		if (owner==null) throw new ServerException("User with id="+ownerId+" unknown. Group creation failed.");
@@ -61,25 +61,25 @@ public class ServerMsg {
 		LOG.info("Group "+res.getId()+" created");
 		return res;
 	}
-	
+
 	public boolean removeGroup(int groupId) {
 		GroupMsg g =groups.remove(groupId);
 		if (g==null) return false;
 		g.beforeDelete();
 		return true;
 	}
-	
+
 	public boolean removeUser(int userId) {
 		UserMsg u =users.remove(userId);
 		if (u==null) return false;
 		u.beforeDelete();
 		return true;
 	}
-	
+
 	public UserMsg getUser(int userId) {
 		return users.get(userId);
 	}
-	
+
 	// Methode utilisée pour savoir quoi faire d'un paquet
 	// reçu par le serveur
 	public void processPacket(Packet p) {
@@ -91,12 +91,12 @@ public class ServerMsg {
 			if (g.getMembers().contains(sender)) pp=g;
 		}
 		else if (p.destId > 0) { // message entre utilisateurs
-			 pp = users.get(p.destId);
+			pp = users.get(p.destId);
 		}
 		else { // message de gestion pour le serveur
 			pp=sp;
 		}
-		
+
 		if (pp != null) {
 			pp.process(p);
 		}

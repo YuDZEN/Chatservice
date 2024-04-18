@@ -68,6 +68,32 @@
 			<version>3.45.2.0</version>
 		</dependency>
 		-->
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.28</version>
+		</dependency>
+
+
+
+		<!-- https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/de.svenkubiak/jBCrypt -->
+		<dependency>
+			<groupId>de.svenkubiak</groupId>
+			<artifactId>jBCrypt</artifactId>
+			<version>0.4.1</version>
+		</dependency>
+
+
+
 
 	</dependencies>
 

@@ -15,7 +15,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import org.mindrot.jbcrypt.BCrypt; // Pour hacher les mots de passe
 
+
+import fr.uga.miashs.dciss.chatservice.client.ChatWindow;
 
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost/Chat_Service";
@@ -52,25 +56,51 @@ public class DatabaseManager {
             return statement.executeUpdate();
         }
     }
-    public static boolean verifyCredentials(String username, char[] password) throws SQLException {
-        // Consulta SQL para verificar las credenciales del usuario
-        String query = "SELECT COUNT(*) FROM Utilisateurs WHERE nom_utilisateur = ? AND mot_de_passe_hash = ?";
+
+    public static boolean usernameExists(String username) throws SQLException {
+        // Requête SQL pour vérifier l'existence du nom d'utilisateur
+        String query = "SELECT COUNT(*) FROM Utilisateurs WHERE nom_utilisateur = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
-            statement.setString(2, new String(password)); // Establecer la contraseña como un String
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     int count = resultSet.getInt(1);
-                    return count == 1; // Si hay una fila con las credenciales proporcionadas, devuelve true
+                    return count >= 1; // S'il y a une ligne avec le nom d'utilisateur fourni, retourne vrai
                 }
             }
         }
 
-        return false; // Si no se encontraron filas, las credenciales son inválidas
+        return false; // S'il n'y a pas de lignes trouvées, le nom d'utilisateur n'existe pas
     }
+
+    public static ResultSet getMessagesForUser(int userId) throws SQLException {
+        String query = "SELECT * FROM Messages WHERE (sender_id = ? OR recipient_id = ?) ORDER BY timestamp";
+        return executeQuery(query, userId, userId);
+    }
+
+    public static void saveMessage(int senderId, int recipientId, String message) throws SQLException {
+        String query = "INSERT INTO Messages (sender_id, recipient_id, message) VALUES (?, ?, ?)";
+        executeUpdate(query, senderId, recipientId, message);
+    }
+
+    public static boolean verifyCredentials(String username, char[] password) throws SQLException {
+        String query = "SELECT mot_de_passe_hash FROM Utilisateurs WHERE nom_utilisateur = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String hashedPassword = resultSet.getString("mot_de_passe_hash");
+                    return BCrypt.checkpw(new String(password), hashedPassword);
+                }
+            }
+        }
+        return false; // S'il n'y a pas de lignes trouvées, les identifiants sont invalides
+    }
+
 
     public static int getUserIdByUsername(String username) throws SQLException {
         String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ?";
@@ -79,15 +109,50 @@ public class DatabaseManager {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return resultSet.getInt("id"); // Devuelve el ID de usuario si se encuentra el nombre de usuario
+                    return resultSet.getInt("id");
                 }
             }
         }
-        throw new SQLException("Le nom d'utilisateur n'existe pas"); // Lanza una excepción si no se encuentra el nombre de usuario
+        throw new SQLException("Le nom d'utilisateur" + username + "n'existe pas");
+    }
+
+    public static String getUserNameById(int userId) throws SQLException {
+        String query = "SELECT nom_utilisateur FROM Utilisateurs WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("nom_utilisateur");
+                }
+            }
+        }
+        throw new SQLException("User with ID " + userId + " not found");
+    }
+
+    // Fonction pour hacher le mot de passe
+    public static String hashPassword(char[] password) {
+        // Convertir le tableau de caractères en String
+        String passwordStr = new String(password);
+        // Hacher le mot de passe
+        String hashedPassword = BCrypt.hashpw(passwordStr, BCrypt.gensalt());
+
+        return hashedPassword; // Retourne le hachage du mot de passe
     }
 
 
+        public static ArrayList<String> getAllUsernames() throws SQLException {
+        ArrayList<String> usernames = new ArrayList<>();
+        String query = "SELECT nom_utilisateur FROM Utilisateurs";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                usernames.add(resultSet.getString("nom_utilisateur"));
+            }
+        }
+        return usernames;
+    }
 
 
-    // Otros métodos para manejar transacciones, cierre de recursos, etc., según sea necesario
 }
