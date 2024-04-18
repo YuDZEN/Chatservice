@@ -15,56 +15,52 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import org.mindrot.jbcrypt.BCrypt; // Pour hacher les mots de passe
 
 
-import fr.uga.miashs.dciss.chatservice.client.ChatWindow;
-
 public class DatabaseManager {
-    private static final String DB_URL = "jdbc:mysql://localhost/Chat_Service";
+    private static final String DB_URL = "jdbc:mysql://localhost/chat_service";
     private static final String USER = "AdminChat";
     private static final String PASSWORD = null;
 
-    // Método para establecer una conexión con la base de datos
+    // Méthode pour établir une connexion avec la base de données
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASSWORD);
     }
 
-    // Método para ejecutar una consulta SQL y obtener un conjunto de resultados
+    // Méthode pour exécuter une requête SQL et obtenir un ensemble de résultats
     public static ResultSet executeQuery(String query, Object... params) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-            // Establecer parámetros de consulta, si los hay
+            // Définir les paramètres de la requête, s'il y en a
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
-            // Ejecutar la consulta y devolver el conjunto de resultados
+            // Exécuter la requête et retourner l'ensemble de résultats
             return statement.executeQuery();
         }
     }
 
-    // Método para ejecutar una actualización SQL (INSERT, UPDATE, DELETE)
+    // Méthode pour exécuter une mise à jour SQL (INSERT, UPDATE, DELETE)
     public static int executeUpdate(String query, Object... params) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-            // Establecer parámetros de consulta, si los hay
+            // Définir les paramètres de la requête, s'il y en a
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
-            // Ejecutar la actualización y devolver el número de filas afectadas
+            // Exécuter la mise à jour et retourner le nombre de lignes affectées
             return statement.executeUpdate();
         }
     }
-
     public static boolean usernameExists(String username) throws SQLException {
         // Requête SQL pour vérifier l'existence du nom d'utilisateur
         String query = "SELECT COUNT(*) FROM Utilisateurs WHERE nom_utilisateur = ?";
-
+    
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
-
+    
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     int count = resultSet.getInt(1);
@@ -72,35 +68,30 @@ public class DatabaseManager {
                 }
             }
         }
-
+    
         return false; // S'il n'y a pas de lignes trouvées, le nom d'utilisateur n'existe pas
     }
-
-    public static ResultSet getMessagesForUser(int userId) throws SQLException {
-        String query = "SELECT * FROM Messages WHERE (sender_id = ? OR recipient_id = ?) ORDER BY timestamp";
-        return executeQuery(query, userId, userId);
-    }
-
-    public static void saveMessage(int senderId, int recipientId, String message) throws SQLException {
-        String query = "INSERT INTO Messages (sender_id, recipient_id, message) VALUES (?, ?, ?)";
-        executeUpdate(query, senderId, recipientId, message);
-    }
-
     public static boolean verifyCredentials(String username, char[] password) throws SQLException {
+        // Requête SQL pour obtenir le mot de passe haché de l'utilisateur
         String query = "SELECT mot_de_passe_hash FROM Utilisateurs WHERE nom_utilisateur = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
+            // statement.setString(2, String.valueOf(password)); // Convertir char[] en String
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     String hashedPassword = resultSet.getString("mot_de_passe_hash");
+
+                    // Vérifier si le mot de passe fourni, une fois haché, correspond au mot de passe haché stocké
                     return BCrypt.checkpw(new String(password), hashedPassword);
                 }
             }
         }
+
         return false; // S'il n'y a pas de lignes trouvées, les identifiants sont invalides
     }
-
 
     public static int getUserIdByUsername(String username) throws SQLException {
         String query = "SELECT id FROM Utilisateurs WHERE nom_utilisateur = ?";
@@ -109,50 +100,39 @@ public class DatabaseManager {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return resultSet.getInt("id");
+                    return resultSet.getInt("id"); // Renvoie l'ID de l'utilisateur si le nom d'utilisateur est trouvé
                 }
             }
         }
-        throw new SQLException("Le nom d'utilisateur" + username + "n'existe pas");
+        throw new SQLException("Le nom d'utilisateur n'existe pas"); // Lance une exception si le nom d'utilisateur n'est pas trouvé
     }
 
-    public static String getUserNameById(int userId) throws SQLException {
+    // Autres méthodes pour gérer les transactions, fermer les ressources, etc., selon les besoins
+    public static String getUsernameById(int userId) throws SQLException {
+        // Requête SQL pour obtenir le nom d'utilisateur
         String query = "SELECT nom_utilisateur FROM Utilisateurs WHERE id = ?";
+    
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, userId);
+    
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getString("nom_utilisateur");
                 }
             }
         }
-        throw new SQLException("User with ID " + userId + " not found");
+    
+        return null; // Retourne null si aucun utilisateur avec cet ID n'a été trouvé
     }
-
     // Fonction pour hacher le mot de passe
     public static String hashPassword(char[] password) {
         // Convertir le tableau de caractères en String
         String passwordStr = new String(password);
+
         // Hacher le mot de passe
         String hashedPassword = BCrypt.hashpw(passwordStr, BCrypt.gensalt());
-
+        
         return hashedPassword; // Retourne le hachage du mot de passe
     }
-
-
-        public static ArrayList<String> getAllUsernames() throws SQLException {
-        ArrayList<String> usernames = new ArrayList<>();
-        String query = "SELECT nom_utilisateur FROM Utilisateurs";
-        try (Connection conn = getConnection();
-             PreparedStatement statement = conn.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                usernames.add(resultSet.getString("nom_utilisateur"));
-            }
-        }
-        return usernames;
-    }
-
-
 }

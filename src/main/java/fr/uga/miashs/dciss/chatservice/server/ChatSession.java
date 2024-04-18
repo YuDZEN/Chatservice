@@ -22,7 +22,7 @@ public class ChatSession extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel loginPanel = new JPanel(new GridLayout(4, 2, 5, 5)); // Agregar un espacio entre filas y columnas
+        JPanel loginPanel = new JPanel(new GridLayout(4, 2, 5, 5)); // Ajouter un espace entre les lignes et les colonnes
 
         JLabel usernameLabel = new JLabel("Username:");
         JLabel passwordLabel = new JLabel("Password:");
@@ -31,23 +31,23 @@ public class ChatSession extends JFrame {
         loginButton = new JButton("Login");
         registerButton = new JButton("Register");
 
-        // Establecer un tamaño preferido para los campos de texto y los botones
-        usernameField.setPreferredSize(new Dimension(150, 30));
-        passwordField.setPreferredSize(new Dimension(150, 30));
-        loginButton.setPreferredSize(new Dimension(100, 30));
-        registerButton.setPreferredSize(new Dimension(100, 30));
+        // Définir une taille préférée pour les champs de texte et les boutons
+        usernameField.setPreferredSize(new Dimension(150, 25));
+        passwordField.setPreferredSize(new Dimension(150, 25));
+        loginButton.setPreferredSize(new Dimension(100, 25));
+        registerButton.setPreferredSize(new Dimension(100, 25));
 
-        // Establecer un estilo para los botones
+        // Définir un style pour les boutons
         loginButton.setBackground(Color.BLUE);
         loginButton.setForeground(Color.BLACK);
         registerButton.setBackground(Color.GRAY);
         registerButton.setForeground(Color.BLACK);
 
-        // Establecer un estilo para los labels
+        // Définir un style pour les labels
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         passwordLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        // Agregar espacio adicional al panel de login
+        // Ajouter un espace supplémentaire au panneau de connexion
         loginPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         loginButton.addActionListener(new ActionListener() {
@@ -62,15 +62,17 @@ public class ChatSession extends JFrame {
                 }
 
                 try {
-                    int userId = DatabaseManager.getUserIdByUsername(username); // Obtener el ID de usuario
-                    JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
-                    ClientMsg client = new ClientMsg("localhost", 1666); // Crear el cliente
-                    client.startSession(); // Iniciar la sesión
-                    ChatWindow chatWindow = new ChatWindow(username, client); // Crear la ventana del chat con el ID de usuario y el cliente
-                    chatWindow.setVisible(true);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Nom d'utilisateur ou mot de passe incorrect.");
+                    // Vérifier les identifiants de l'utilisateur
+                    if(DatabaseManager.verifyCredentials(username, password)) {
+                        JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
+                        ClientMsg client = new ClientMsg("localhost", 1666); // Création du client
+                        client.startSession(); // Initialisation de la session
+                        ChatWindow chatWindow = new ChatWindow(username, client); // Créer la fenêtre de chat avec l’ID utilisateur
+                        chatWindow.setVisible(true);
+                    } else {
+                        // Informer l'utilisateur que les identifiants sont incorrects
+                        JOptionPane.showMessageDialog(ChatSession.this, "Nom d'utilisateur ou mot de passe incorrect.");
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");
@@ -82,7 +84,7 @@ public class ChatSession extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 RegisterDialog registerDialog = new RegisterDialog(ChatSession.this);
-                registerDialog.setVisible(true); // Muestra el diálogo de registro
+                registerDialog.setVisible(true); // Affiche la boîte de dialogue d'enregistrement
             }
         });
 
@@ -90,27 +92,17 @@ public class ChatSession extends JFrame {
         loginPanel.add(usernameField);
         loginPanel.add(passwordLabel);
         loginPanel.add(passwordField);
-        loginPanel.add(new JLabel()); // Espacio vacío
+        loginPanel.add(new JLabel()); // Espace vide
         loginPanel.add(loginButton);
-        loginPanel.add(new JLabel()); // Espacio vacío
+        loginPanel.add(new JLabel()); // Espace vide
         loginPanel.add(registerButton);
 
         add(loginPanel, BorderLayout.CENTER);
-        add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrar el texto
-    }
-
-    private String hashPassword(char[] password) {
-        // Implementa tu lógica de hash aquí (por ejemplo, usando bcrypt o PBKDF2)
-        return ""; // Devuelve el hash de la contraseña
+        add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrer le texte
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ChatSession chatSession = new ChatSession();
-                chatSession.setVisible(true);
-            }
-        });
+        ChatSession chatSession = new ChatSession();
+        chatSession.setVisible(true);
     }
 }

@@ -18,11 +18,12 @@ public class TestDatabaseConnection {
     public static void main(String[] args) {
         try {
             Connection connection = DatabaseManager.getConnection();
-            System.out.println("Conexión exitosa a la base de datos.");
-            // Puedes cerrar la conexión si no la necesitas más
+            System.out.println("Connexion réussie à la base de données.");
+            // Vous pouvez fermer la connexion si vous n'en avez plus besoin
+            connection.close();
             connection.close();
         } catch (SQLException e) {
-            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+            System.err.println("Erreur lors de la connexion à la base de données : " + e.getMessage());
             e.printStackTrace();
         }
     }

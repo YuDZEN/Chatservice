@@ -64,10 +64,10 @@ public class RegisterDialog extends JDialog {
                     } else {
                         // Construire la requête SQL d'insertion
                         String insertQuery = "INSERT INTO Utilisateurs (nom_utilisateur, mot_de_passe_hash, email) VALUES (?, ?, ?)";
-
+                
                         // Exécuter la requête SQL
                         int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, hashedPassword, email);
-
+                
                         if (rowsAffected > 0) {
                             // Enregistrement réussi
                             JOptionPane.showMessageDialog(RegisterDialog.this, "Enregistrement réussi !");
@@ -78,11 +78,11 @@ public class RegisterDialog extends JDialog {
                         }
                     }
                 } catch (SQLException ex) {
-                    // Gérer toute exception de la base de données
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
+                        // Gérer toute exception de la base de données
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
                 }
-
+                
             }
         });
 
@@ -108,3 +108,4 @@ public class RegisterDialog extends JDialog {
         setLocationRelativeTo(parent); // Centre la boîte de dialogue sur l'écran
     }
 }
+
