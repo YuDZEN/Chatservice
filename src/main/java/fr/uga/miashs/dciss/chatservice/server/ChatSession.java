@@ -64,8 +64,11 @@ public class ChatSession extends JFrame {
                 try {
                     // Vérifier les identifiants de l'utilisateur
                     if(DatabaseManager.verifyCredentials(username, password)) {
+
+                        int userid = DatabaseManager.getUserIdByUsername(username); // Obtenir l'ID utilisateur
+
                         JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
-                        ClientMsg client = new ClientMsg("localhost", 1666); // Création du client
+                        ClientMsg client = new ClientMsg(userid,"localhost", 1666); // Création du client
                         client.startSession(); // Initialisation de la session
                         ChatWindow chatWindow = new ChatWindow(username, client); // Créer la fenêtre de chat avec l’ID utilisateur
                         chatWindow.setVisible(true);
