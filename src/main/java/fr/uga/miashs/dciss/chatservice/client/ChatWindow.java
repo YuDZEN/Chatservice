@@ -18,8 +18,12 @@ import java.net.UnknownHostException;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
+
+import fr.uga.miashs.dciss.chatservice.common.Packet;
 import fr.uga.miashs.dciss.chatservice.common.db.DatabaseManager;
 import fr.uga.miashs.dciss.chatservice.server.ChatSession;
+
+import java.util.List;
 
 
 public class ChatWindow extends JFrame {
@@ -31,7 +35,7 @@ public class ChatWindow extends JFrame {
     private int userId;
 
     public ChatWindow(String nom_utilisateur, ClientMsg client) {
-        this.userId = userId;
+        this.userId = client.getIdentifier(); // Obtener el identificador de usuario del cliente
         this.client = client;
         setTitle("Chat - User : " + nom_utilisateur);
         setSize(400, 300);
@@ -107,16 +111,30 @@ public class ChatWindow extends JFrame {
 
         // Cargar usuarios disponibles en el JComboBox
         loadUsers();
+
+        // Agregar un MessageListener al cliente
+        client.addMessageListener(new MessageListener() {
+            @Override
+            public void messageReceived(Packet p) {
+                // Cuando se recibe un mensaje, actualizar la interfaz de usuario
+                try {
+                    String senderName = DatabaseManager.getUserNameById(p.srcId);
+                    String message = new String(p.data);
+                    appendMessage(senderName, message);
+                } catch (SQLException e) {
+                    e.printStackTrace(); // o manejo de error apropiado
+                }
+            }
+        });
     }
+
 
     private void retrieveAndDisplayMessages() {
         try {
-            ResultSet rs = DatabaseManager.getMessagesForUser(userId);
-            while (rs.next()) {
-                int senderId = rs.getInt("sender_id");
-                String senderName = DatabaseManager.getUserNameById(senderId);
-                String message = rs.getString("message");
-                appendMessage(senderName, message);
+            List<Message> messages = DatabaseManager.getMessagesForUser(userId);
+            for (Message message : messages) {
+                String senderName = DatabaseManager.getUserNameById(message.getSenderId());
+                appendMessage(senderName, message.getMessage());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,7 +143,12 @@ public class ChatWindow extends JFrame {
 
     private void saveMessage(int senderId, int recipientId, String message) {
         try {
-            DatabaseManager.saveMessage(senderId, recipientId, message);
+            // Verificar que el senderId existe en la tabla Utilisateurs
+            if (DatabaseManager.userExists(senderId)) {
+                DatabaseManager.saveMessage(senderId, recipientId, message);
+            } else {
+                System.out.println("Error: sender_id " + senderId + " does not exist in the Utilisateurs table.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

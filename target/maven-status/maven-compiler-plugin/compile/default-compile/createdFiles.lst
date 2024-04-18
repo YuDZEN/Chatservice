@@ -1,3 +1,4 @@
+fr/uga/miashs/dciss/chatservice/client/ChatWindow$4.class
 fr/uga/miashs/dciss/chatservice/server/UserMsg.class
 fr/uga/miashs/dciss/chatservice/server/ChatSession$2.class
 fr/uga/miashs/dciss/chatservice/server/ChatSession$1.class
@@ -5,7 +6,7 @@ fr/uga/miashs/dciss/chatservice/client/ConnectionListener.class
 fr/uga/miashs/dciss/chatservice/server/ServerException.class
 fr/uga/miashs/dciss/chatservice/server/ServerMsg.class
 fr/uga/miashs/dciss/chatservice/server/RegisterDialog.class
-fr/uga/miashs/dciss/chatservice/server/ChatSession$3.class
+fr/uga/miashs/dciss/chatservice/client/Message.class
 fr/uga/miashs/dciss/chatservice/client/MessageListener.class
 fr/uga/miashs/dciss/chatservice/common/Packet.class
 fr/uga/miashs/dciss/chatservice/client/ChatWindow$2.class

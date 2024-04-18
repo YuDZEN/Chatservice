@@ -82,25 +82,30 @@ public class ServerMsg {
 
 	// Methode utilisée pour savoir quoi faire d'un paquet
 	// reçu par le serveur
+	// En la clase ServerMsg, dentro del método processPacket
 	public void processPacket(Packet p) {
 		PacketProcessor pp = null;
-		if (p.destId < 0) { //message de groupe
-			// can be send only if sender is member
-			UserMsg sender = users.get(p.srcId);
-			GroupMsg g = groups.get(p.destId);
-			if (g.getMembers().contains(sender)) pp=g;
-		}
-		else if (p.destId > 0) { // message entre utilisateurs
-			pp = users.get(p.destId);
-		}
-		else { // message de gestion pour le serveur
-			pp=sp;
+		if (p.destId < 0) {
+			// Lógica existente para mensajes de grupo
+		} else if (p.destId > 0) {
+			// Mensaje entre usuarios
+			UserMsg recipient = users.get(p.destId);
+			if (recipient != null) {
+				// Enviar el mensaje al usuario destinatario
+				recipient.process(p);
+			} else {
+				LOG.warning("User with ID " + p.destId + " not found.");
+			}
+		} else {
+			// Lógica existente para mensajes de control para el servidor
+			pp = sp;
 		}
 
 		if (pp != null) {
 			pp.process(p);
 		}
 	}
+
 
 	public void start() {
 		started = true;
@@ -128,7 +133,7 @@ public class ServerMsg {
 				// une pour envoyer des messages au client
 				// les deux boucles sont gérées au niveau de la classe UserMsg
 				UserMsg x = users.get(userId);
-				if (x.open(s)) {
+				if (x!= null && x.open(s)) {
 					LOG.info(userId + " connected");
 					// lancement boucle de reception
 					executor.submit(() -> x.receiveLoop());

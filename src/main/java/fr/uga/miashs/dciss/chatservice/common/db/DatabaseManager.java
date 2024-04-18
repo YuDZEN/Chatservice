@@ -16,6 +16,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import fr.uga.miashs.dciss.chatservice.client.Message;
 import org.mindrot.jbcrypt.BCrypt; // Pour hacher les mots de passe
 
 
@@ -76,14 +79,40 @@ public class DatabaseManager {
         return false; // S'il n'y a pas de lignes trouvées, le nom d'utilisateur n'existe pas
     }
 
-    public static ResultSet getMessagesForUser(int userId) throws SQLException {
-        String query = "SELECT * FROM Messages WHERE (sender_id = ? OR recipient_id = ?) ORDER BY timestamp";
-        return executeQuery(query, userId, userId);
+    public static List<Message> getMessagesForUser(int userId) throws SQLException {
+        List<Message> messages = new ArrayList<>();
+        String query = "SELECT sender_id, message FROM Messages WHERE recipient_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int senderId = resultSet.getInt("sender_id");
+                    String message = resultSet.getString("message");
+                    messages.add(new Message(senderId, message));
+                }
+            }
+        }
+        return messages;
     }
 
     public static void saveMessage(int senderId, int recipientId, String message) throws SQLException {
         String query = "INSERT INTO Messages (sender_id, recipient_id, message) VALUES (?, ?, ?)";
         executeUpdate(query, senderId, recipientId, message);
+    }
+
+    public static boolean userExists(int userId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Utilisateurs WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean verifyCredentials(String username, char[] password) throws SQLException {
