@@ -52,6 +52,9 @@ public class RegisterDialog extends JDialog {
                     return; // Arrête le processus d'inscription si les champs sont vides
                 }
 
+                // Hacher le mot de passe
+                String hashedPassword = DatabaseManager.hashPassword(password);
+
                 // Autres validations (vous pouvez en ajouter plus selon vos besoins)
                 try {
                     // Vérifier si le nom d'utilisateur existe déjà
@@ -63,7 +66,7 @@ public class RegisterDialog extends JDialog {
                         String insertQuery = "INSERT INTO Utilisateurs (nom_utilisateur, mot_de_passe_hash, email) VALUES (?, ?, ?)";
                 
                         // Exécuter la requête SQL
-                        int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, new String(password), email);
+                        int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, hashedPassword, email);
                 
                         if (rowsAffected > 0) {
                             // Enregistrement réussi

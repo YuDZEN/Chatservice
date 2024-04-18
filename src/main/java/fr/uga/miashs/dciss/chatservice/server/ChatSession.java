@@ -63,9 +63,15 @@ public class ChatSession extends JFrame {
                 }
 
                 try {
-                    JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
-                    ChatWindow chatWindow = new ChatWindow(username); // Créer la fenêtre de chat avec l’ID utilisateur
-                    chatWindow.setVisible(true);
+                    // Vérifier les identifiants de l'utilisateur
+                    if(DatabaseManager.verifyCredentials(username, password)) {
+                        JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
+                        ChatWindow chatWindow = new ChatWindow(username); // Créer la fenêtre de chat avec l’ID utilisateur
+                        chatWindow.setVisible(true);
+                    } else {
+                        // Informer l'utilisateur que les identifiants sont incorrects
+                        JOptionPane.showMessageDialog(ChatSession.this, "Nom d'utilisateur ou mot de passe incorrect.");
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");
@@ -94,11 +100,6 @@ public class ChatSession extends JFrame {
 
         add(loginPanel, BorderLayout.CENTER);
         add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrer le texte
-    }
-
-    private String hashPassword(char[] password) {
-        // Implémentez votre logique de hachage ici (par exemple, en utilisant bcrypt ou PBKDF2)
-        return ""; // Retourne le hachage du mot de passe
     }
 
     public static void main(String[] args) {

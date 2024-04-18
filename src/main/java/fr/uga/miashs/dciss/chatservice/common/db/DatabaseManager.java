@@ -15,6 +15,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.mindrot.jbcrypt.BCrypt; // Pour hacher les mots de passe
 
 
 public class DatabaseManager {
@@ -71,18 +72,20 @@ public class DatabaseManager {
         return false; // S'il n'y a pas de lignes trouvées, le nom d'utilisateur n'existe pas
     }
     public static boolean verifyCredentials(String username, char[] password) throws SQLException {
-        // Requête SQL pour vérifier les identifiants de l'utilisateur
-        String query = "SELECT COUNT(*) FROM Utilisateurs WHERE nom_utilisateur = ? AND mot_de_passe_hash = ?";
+        // Requête SQL pour obtenir le mot de passe haché de l'utilisateur
+        String query = "SELECT mot_de_passe_hash FROM Utilisateurs WHERE nom_utilisateur = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
-            statement.setString(2, String.valueOf(password)); // Convertir char[] en String
+            // statement.setString(2, String.valueOf(password)); // Convertir char[] en String
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    int count = resultSet.getInt(1);
-                    return count >= 1; // S'il y a une ligne avec les identifiants fournis, retourne vrai
+                    String hashedPassword = resultSet.getString("mot_de_passe_hash");
+
+                    // Vérifier si le mot de passe fourni, une fois haché, correspond au mot de passe haché stocké
+                    return BCrypt.checkpw(new String(password), hashedPassword);
                 }
             }
         }
@@ -124,5 +127,15 @@ public class DatabaseManager {
         }
     
         return null; // Retourne null si aucun utilisateur avec cet ID n'a été trouvé
+    }
+    // Fonction pour hacher le mot de passe
+    public static String hashPassword(char[] password) {
+        // Convertir le tableau de caractères en String
+        String passwordStr = new String(password);
+
+        // Hacher le mot de passe
+        String hashedPassword = BCrypt.hashpw(passwordStr, BCrypt.gensalt());
+        
+        return hashedPassword; // Retourne le hachage du mot de passe
     }
 }
