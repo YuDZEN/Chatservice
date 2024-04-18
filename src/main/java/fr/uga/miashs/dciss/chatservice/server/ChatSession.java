@@ -67,6 +67,7 @@ public class ChatSession extends JFrame {
                         JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
                         ClientMsg client = new ClientMsg("localhost", 1666); // Création du client
                         client.startSession(); // Initialisation de la session
+                        dispose(); // Fermer la fenêtre de connexion
                         ChatWindow chatWindow = new ChatWindow(username, client); // Créer la fenêtre de chat avec l’ID utilisateur
                         chatWindow.setVisible(true);
                     } else {
