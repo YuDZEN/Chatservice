@@ -79,7 +79,33 @@ public class ServerMsg {
 	public UserMsg getUser(int userId) {
 		return users.get(userId);
 	}
-	
+
+		public void sendImageData(int userId, byte[] imageData) {
+			// Get the user to which the image data should be sent
+			UserMsg user = getUser(userId);
+
+			// Check if the user exists
+			if (user != null) {
+				// Send the image data to the user
+				user.receiveImageData(imageData); //  UserMsg class has a method to receive image data
+			} else {
+				System.out.println("User with ID " + userId + " not found");}
+			}
+
+		public void receiveImageData(byte[] imageData) {
+			// Implementation of receiving image data
+			// Process the received image data
+			// We can save the image to a file or display it
+			// We can use libraries like ImageIO or JavaFX to handle the image data
+			try {
+				FileOutputStream fos = new FileOutputStream("received_image.jpg");
+				fos.write(imageData);
+				fos.close();
+				System.out.println("Image received and saved successfully");
+			} catch (IOException e) {
+				System.out.println("Failed to save received image: " + e.getMessage());
+			}
+		}
 	// Methode utilisée pour savoir quoi faire d'un paquet
 	// reçu par le serveur
 	public void processPacket(Packet p) {

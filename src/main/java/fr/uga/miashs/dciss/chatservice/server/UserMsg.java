@@ -66,6 +66,32 @@ public class UserMsg implements PacketProcessor{
 		
 	}
 	
+	public UserMsg getUser(int userId) {
+		// Implement the logic to retrieve the UserMsg object based on the user ID
+		// Return the UserMsg object if found, or null if not found
+		// Example implementation:
+		// return userMap.get(userId);
+		return null;
+	}
+
+	public void receiveImageData(byte[] imageData) {
+		// Implement the logic to receive and process the image data
+		// Example implementation:
+		// System.out.println("Received image data: " + Arrays.toString(imageData));
+	}
+	
+	public void sendImageData(int userId, byte[] imageData) {
+		// Get the user to which the image data should be sent
+		UserMsg user = getUser(userId);
+
+		// Check if the user exists
+		if (user != null) {
+			// Send the image data to the user
+			user.receiveImageData(imageData);
+		} else {
+			System.out.println("User with ID " + userId + " not found");
+		}
+	}
 	
 	/*
 	 * METHODS FOR MANAING THE CONNECTION

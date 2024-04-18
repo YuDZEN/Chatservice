@@ -13,7 +13,9 @@ package fr.uga.miashs.dciss.chatservice.client;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -139,6 +141,11 @@ public class ClientMsg {
 	 * @param data   the data to be sent
 	 */
 	public void sendPacket(int destId, byte[] data) {
+		if (dos == null) {
+			// Handle the situation when dos is null, e.g., throw an exception or log an error
+			throw new IllegalStateException("DataOutputStream (dos) is not initialized");
+		}
+
 		try {
 			synchronized (dos) {
 				dos.writeInt(destId);
@@ -153,20 +160,47 @@ public class ClientMsg {
 		
 	}
 
-	public void sendFile(int destId, File file) {
-		try {
-			FileInputStream fis = new FileInputStream(file); // Create a FileInputStream to read the file
-			byte[] buffer = new byte[1024]; // Create a buffer (byte array) to store the file content, 1024 bytes at a time
-			int length; // Variable to store the number of bytes read from the file
-			while ((length = fis.read(buffer)) != -1) { // Read the file content into the buffer
-				sendPacket(destId, buffer); // Send the buffer to the server
-			}
-			fis.close(); // Close the FileInputStream
-		} catch (IOException e) {
-			// error, connection closed
-			closeSession();
+	private static byte[] readFile(String filePath) throws IOException {
+		File file = new File(filePath);
+		if (!file.exists()) {
+		  throw new IllegalArgumentException("File not found: " + filePath);
 		}
-	}
+		return Files.readAllBytes(file.toPath());
+	  }
+	  
+	  private static String getContentType(String filename) {
+		String mimeType = URLConnection.guessContentTypeFromName(filename);
+		return mimeType != null ? mimeType : "application/octet-stream";
+	  }
+
+	  public void sendPacket(int destId, boolean isImage, String filePath) throws IOException {
+		if (dos == null) {
+		  throw new IllegalStateException("DataOutputStream (dos) is not initialized");
+		}
+	  
+		byte[] fileData = readFile(filePath);
+		String contentType = getContentType(filePath);
+	  
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream stream = new DataOutputStream(bos);
+	  
+		// Send metadata (content type, data length)
+		stream.writeBoolean(isImage);
+		stream.writeUTF(contentType);
+		stream.writeInt(fileData.length);
+		stream.write(fileData);
+		stream.flush();
+	  
+		// Send data packet to server
+		dos.writeInt(destId);
+		dos.writeInt(bos.size());
+		dos.write(bos.toByteArray());
+		dos.flush();
+	  }
+
+	  
+	  
+	  
 
 	/**
 	 * Start the receive loop. Has to be called only once.
@@ -174,14 +208,23 @@ public class ClientMsg {
 	private void receiveLoop() {
 		try {
 			while (s != null && !s.isClosed()) {
-
+	
 				int sender = dis.readInt();
 				int dest = dis.readInt();
 				int length = dis.readInt();
 				byte[] data = new byte[length];
 				dis.readFully(data);
-				notifyMessageListeners(new Packet(sender, dest, data));
-
+				
+				// Check if the data is an image file
+				if (new String(data).startsWith("IMAGE")) {
+					// Remove the "IMAGE" identifier from the data
+					byte[] imageData = Arrays.copyOfRange(data, "IMAGE".length(), data.length);
+					// Notify listeners with the image data
+					notifyMessageListeners(new Packet(sender, dest, imageData));
+				} else {
+					// Handle non-image data
+					notifyMessageListeners(new Packet(sender, dest, data));
+				}
 			}
 		} catch (IOException e) {
 			// error, connection closed

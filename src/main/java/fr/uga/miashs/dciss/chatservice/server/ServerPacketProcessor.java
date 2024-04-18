@@ -25,17 +25,28 @@ public class ServerPacketProcessor implements PacketProcessor {
 	}
 
 	@Override
-	public void process(Packet p) {
-		// ByteBufferVersion. On aurait pu utiliser un ByteArrayInputStream + DataInputStream à la place
-		ByteBuffer buf = ByteBuffer.wrap(p.data);
-		byte type = buf.get();
-		
-		if (type == 1) { // cas creation de groupe
-			createGroup(p.srcId,buf);
-		} else {
-			LOG.warning("Server message of type=" + type + " not handled by procesor");
-		}
-	}
+public void process(Packet p) {
+    // ByteBufferVersion. On aurait pu utiliser un ByteArrayInputStream + DataInputStream à la place
+    ByteBuffer buf = ByteBuffer.wrap(p.data);
+    byte type = buf.get();
+    
+    if (type == 1) { // cas creation de groupe
+        createGroup(p.srcId,buf);
+    } else if (type == 2) { // cas image data
+        processImageData(p.srcId, buf);
+    } else {
+        LOG.warning("Server message of type=" + type + " not handled by procesor");
+    }
+}
+
+public void processImageData(int ownerId, ByteBuffer data) {
+    // Read the image data from the ByteBuffer
+    byte[] imageData = new byte[data.remaining()];
+    data.get(imageData);
+
+    // Forward the image data to the appropriate user or group
+    // This will depend on your application's logic
+}
 	
 	public void createGroup(int ownerId, ByteBuffer data) {
 		int nb = data.getInt();
