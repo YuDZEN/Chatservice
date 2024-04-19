@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.*;
 import javax.swing.JOptionPane;
@@ -24,9 +25,11 @@ import fr.uga.miashs.dciss.chatservice.common.db.DatabaseManager;
 import fr.uga.miashs.dciss.chatservice.server.ChatSession;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class ChatWindow extends JFrame {
+    private static final Logger LOG = Logger.getLogger(DatabaseManager.class.getName());
     private JTextArea chatArea;
     private JTextField messageField;
     private JButton sendButton;
@@ -89,8 +92,12 @@ public class ChatWindow extends JFrame {
                     // Supongamos que obtienes el ID del usuario seleccionado en selectedUserId
                     int selectedUserId = getUserIdByName(selectedUser); // Corregir el nombre del método
                     client.sendPacket(selectedUserId, message.getBytes());
+                    System.out.println("Message sent to " + selectedUser + ": " + message);
                     appendMessage("You", message);
+
                     saveMessage(userId, selectedUserId, message);
+                    System.out.println(userId + " " + selectedUserId + " " + message);
+                    System.out.println("Message saved in the database.");
                     messageField.setText("");
                 } else {
                     JOptionPane.showMessageDialog(ChatWindow.this, "Please select a user to send message.");
@@ -119,6 +126,7 @@ public class ChatWindow extends JFrame {
                 // Cuando se recibe un mensaje, actualizar la interfaz de usuario
                 try {
                     String senderName = DatabaseManager.getUserNameById(p.srcId);
+                    LOG.warning("Message received from " + senderName);
                     String message = new String(p.data);
                     appendMessage(senderName, message);
                 } catch (SQLException e) {
@@ -182,15 +190,11 @@ public class ChatWindow extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try {
-                    ClientMsg client = new ClientMsg("localhost", 1666);
-                    client.startSession();
+                ClientMsg client = new ClientMsg("lainean", "localhost", 1666); // Añade el nombre de usuario
+                client.startSession();
 
-                    ChatWindow chatWindow = new ChatWindow("lainean", client); // Aquí necesitas pasar el ID del usuario
-                    chatWindow.setVisible(true);
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
+                ChatWindow chatWindow = new ChatWindow("lainean", client);
+                chatWindow.setVisible(true);
             }
         });
     }

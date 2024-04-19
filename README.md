@@ -21,7 +21,6 @@ Maven
  ```sh
    mvn package
 ```
-   
 3. Clean the project
 ```sh
    mvn clean
@@ -60,7 +59,7 @@ Launch server
    ```sh
       mvn package exec:java -Dexec.mainClass="fr.uga.miashs.dciss.chatservice.server.ServerMsg"
    ```
-   or (mvn package required to recompile if changes are made)
+or (mvn package required to recompile if changes are made)
    ```sh
       java -cp target/chatservice-0.0.1-SNAPSHOT-jar-with-dependencies.jar fr.uga.miashs.dciss.chatservice.server.ServerMsg
    ```
@@ -69,7 +68,7 @@ Launch client
    ```sh
       mvn package exec:java -Dexec.mainClass="fr.uga.miashs.dciss.chatservice.client.ClientMsg"
    ```
-   or (mvn package required to recompile if changes are made)
+or (mvn package required to recompile if changes are made)
    ```sh
       java -cp target/chatservice-0.0.1-SNAPSHOT-jar-with-dependencies.jar fr.uga.miashs.dciss.chatservice.client.ClientMsg
    ```
@@ -96,6 +95,3 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 * []()
 * []()
 * []()
-
-
-
