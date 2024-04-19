@@ -9,33 +9,24 @@
  * You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package fr.uga.miashs.dciss.chatservice.common;
-
-/*
- * Data structure to represent a packet
- */
+package fr.uga.miashs.dciss.chatservice.client;
 
 
 
-public class Packet {
-	public final int srcId;
-	public final int destId;
-	public final byte[] data;
-	public int type;
+public class Message {
+    private int senderId;
+    private String message;
 
-	public Packet(int type, int srcId, int destId, byte[] data) {
-		if (!isValidId(srcId) || !isValidId(destId)) {
-			throw new IllegalArgumentException("Invalid source or destination ID");
-		}
-		this.type = type;
-		this.srcId = srcId;
-		this.destId = destId;
-		this.data = data;
-	}
+    public Message(int senderId, String message) {
+        this.senderId = senderId;
+        this.message = message;
+    }
 
-	private boolean isValidId(int id) {
-		// Realiza la validación del ID aquí
-		// Por ejemplo, podrías verificar si el ID está dentro de un rango válido
-		return id > 0;
-	}
+    public int getSenderId() {
+        return senderId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

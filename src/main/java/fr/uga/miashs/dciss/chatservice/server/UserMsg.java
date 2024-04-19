@@ -94,26 +94,43 @@ public class UserMsg implements PacketProcessor{
 	}
 
 	// boucle d'envoie
+	// boucle d'envoie
 	public void receiveLoop() {
 		try {
 			DataInputStream dis = new DataInputStream(s.getInputStream());
-			// tant que la connexion n'est pas terminée
-			while (active && ! s.isInputShutdown()) {
-				// on lit les paquets envoyé par le client
+			while (active && !s.isInputShutdown()) {
+				int type = dis.readInt();
 				int destId = dis.readInt();
 				int length = dis.readInt();
 				byte[] content = new byte[length];
 				dis.readFully(content);
-				// on envoie le paquet à ServerMsg pour qu'il le gère
-				server.processPacket(new Packet(userId,destId,content));
-			}
 
+				if (destId <= 0) {
+					LOG.warning("Invalid destination ID: " + destId);
+					continue; // Salta el procesamiento adicional para este paquete
+				}
+
+				UserMsg recipient = server.getUser(destId);
+				if (recipient != null) {
+
+					if (type==0){
+					server.processPacket(new Packet(type, userId, destId, content));
+					} else if (type ==1) {
+
+
+					}
+				} else {
+					LOG.warning("User with ID " + destId + " not found.");
+					// Considera enviar una notificación de error al remitente aquí
+				}
+			}
 		} catch (IOException e) {
-			// problem in reading, probably end connection
-			LOG.warning("Connection with client "+userId+" is broken...close it.");
+			LOG.warning("Connection with client " + userId + " is broken...close it.");
 		}
 		close();
 	}
+
+
 
 	// boucle d'envoi
 	public void sendLoop() {
@@ -126,6 +143,10 @@ public class UserMsg implements PacketProcessor{
 				// sinon on attend, car la méthode take est "bloquante" tant que la file est vide
 				p = sendQueue.take();
 				// on envoie le paquet au client
+
+
+
+				dos.writeInt(p.type);
 				dos.writeInt(p.srcId);
 				dos.writeInt(p.destId);
 				dos.writeInt(p.data.length);
@@ -141,7 +162,7 @@ public class UserMsg implements PacketProcessor{
 		} catch (InterruptedException e) {
 			throw new ServerException("Sending loop thread of "+userId+" has been interrupted.",e);
 		}
-		close();
+		//close();
 	}
 
 	/**
