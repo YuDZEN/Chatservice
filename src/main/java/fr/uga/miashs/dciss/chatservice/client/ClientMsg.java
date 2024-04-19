@@ -15,9 +15,9 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import fr.uga.miashs.dciss.chatservice.common.Packet;
+
 
 /**
  * Manages the connection to a ServerMsg. Method startSession() is used to
@@ -54,6 +54,10 @@ public class ClientMsg {
 			throw new IllegalArgumentException("id must not be less than 0");
 		if (port <= 0)
 			throw new IllegalArgumentException("Server port must be greater than 0");
+
+
+
+		this.identifier = id;	
 		serverAddress = address;
 		serverPort = port;
 		identifier = id;
@@ -118,6 +122,7 @@ public class ClientMsg {
 				dis = new DataInputStream(s.getInputStream());
 				dos.writeInt(identifier);
 				dos.flush();
+				System.out.println(this.identifier);
 				if (identifier == 0) {
 					identifier = dis.readInt();
 				}
@@ -152,6 +157,7 @@ public class ClientMsg {
 		}
 		
 	}
+
 
 	/**
 	 * Start the receive loop. Has to be called only once.

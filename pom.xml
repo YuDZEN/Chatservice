@@ -59,12 +59,18 @@
 			<artifactId>derbytools</artifactId>
 			<version>10.15.2.0</version>
 		</dependency>
+		<!-- Dépendance MySQL -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.14</version>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.23</version>
 		</dependency>
-
+		<!-- Dependance pour le Hashcode -->
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<!--
@@ -74,6 +80,19 @@
 			<version>3.45.2.0</version>
 		</dependency>
 		-->
+		
+
+
+		<!-- https://mvnrepository.com/artifact/de.svenkubiak/jBCrypt -->
+		<dependency>
+			<groupId>de.svenkubiak</groupId>
+			<artifactId>jBCrypt</artifactId>
+			<version>0.4.1</version>
+		</dependency>
+
+
+
 
 	</dependencies>
+
 </project>
