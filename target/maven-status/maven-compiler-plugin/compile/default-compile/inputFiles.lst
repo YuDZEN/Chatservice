@@ -1,0 +1,16 @@
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ClientMsg.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/GroupMsg.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/Message.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ChatSession.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/PacketProcessor.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/UserMsg.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ChatWindow.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/test/TestDatabaseConnection.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/RegisterDialog.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/common/Packet.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/common/db/DatabaseManager.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerMsg.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/MessageListener.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerException.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerPacketProcessor.java
+/Users/chizhang/Documents/GitHub/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ConnectionListener.java
