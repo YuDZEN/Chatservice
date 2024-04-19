@@ -13,18 +13,21 @@ package fr.uga.miashs.dciss.chatservice.server;
 
 import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import fr.uga.miashs.dciss.chatservice.common.Packet;
+import fr.uga.miashs.dciss.chatservice.common.db.DatabaseManager;
 
 import java.util.*;
+
 
 public class ServerMsg {
 
 	private final static Logger LOG = Logger.getLogger(ServerMsg.class.getName());
-	public final static int SERVER_CLIENTID = 0;
+	//public final static int SERVER_CLIENTID = 0;
 
 	private transient ServerSocket serverSock;
 	private transient boolean started;
@@ -93,8 +96,9 @@ public class ServerMsg {
 			if (recipient != null) {
 				// Enviar el mensaje al usuario destinatario
 				recipient.process(p);
+				LOG.info("Packet sent to " + p.destId);
 			} else {
-				LOG.warning("User with ID " + p.destId + " not found.");
+				LOG.warning("User with ID " + p.destId + " not found. Packet could not be delivered.");
 			}
 		} else {
 			// Lógica existente para mensajes de control para el servidor
@@ -105,6 +109,7 @@ public class ServerMsg {
 			pp.process(p);
 		}
 	}
+
 
 
 	public void start() {
@@ -119,6 +124,7 @@ public class ServerMsg {
 
 				// lit l'identifiant du client
 				int userId = dis.readInt();
+
 				//si 0 alors il faut créer un nouvel utilisateur et
 				// envoyer l'identifiant au client
 				if (userId == 0) {
@@ -127,13 +133,18 @@ public class ServerMsg {
 					dos.flush();
 					users.put(userId, new UserMsg(userId, this));
 				}
-				// si l'identifiant existe ou est nouveau alors 
+				// si l'identifiant existe ou est nouveau alors
 				// deux "taches"/boucles  sont lancées en parralèle
-				// une pour recevoir les messages du client, 
+				// une pour recevoir les messages du client,
 				// une pour envoyer des messages au client
 				// les deux boucles sont gérées au niveau de la classe UserMsg
+				if (users.containsKey(userId) == false) {
+
+					users.put(userId, new UserMsg(userId, this));
+				}
 				UserMsg x = users.get(userId);
-				if (x!= null && x.open(s)) {
+
+				if (x!=null && x.open(s)) {
 					LOG.info(userId + " connected");
 					// lancement boucle de reception
 					executor.submit(() -> x.receiveLoop());
@@ -149,6 +160,8 @@ public class ServerMsg {
 			}
 		}
 	}
+
+
 
 	public void stop() {
 		started = false;

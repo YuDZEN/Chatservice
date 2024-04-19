@@ -14,18 +14,26 @@ package fr.uga.miashs.dciss.chatservice.common;
 /*
  * Data structure to represent a packet
  */
-public class Packet {
 
+
+
+public class Packet {
 	public final int srcId;
 	public final int destId;
 	public final byte[] data;
-	
+
 	public Packet(int srcId, int destId, byte[] data) {
-		super();
+		if (!isValidId(srcId) || !isValidId(destId)) {
+			throw new IllegalArgumentException("Invalid source or destination ID");
+		}
 		this.srcId = srcId;
 		this.destId = destId;
 		this.data = data;
 	}
-	
-	
+
+	private boolean isValidId(int id) {
+		// Realiza la validación del ID aquí
+		// Por ejemplo, podrías verificar si el ID está dentro de un rango válido
+		return id > 0;
+	}
 }

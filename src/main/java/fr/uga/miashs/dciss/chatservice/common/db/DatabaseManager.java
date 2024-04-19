@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
 import fr.uga.miashs.dciss.chatservice.client.Message;
 import org.mindrot.jbcrypt.BCrypt; // Pour hacher les mots de passe
 
@@ -25,6 +25,7 @@ import org.mindrot.jbcrypt.BCrypt; // Pour hacher les mots de passe
 import fr.uga.miashs.dciss.chatservice.client.ChatWindow;
 
 public class DatabaseManager {
+    private static final Logger LOG = Logger.getLogger(DatabaseManager.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost/Chat_Service";
     private static final String USER = "AdminChat";
     private static final String PASSWORD = null;
@@ -78,6 +79,8 @@ public class DatabaseManager {
 
         return false; // S'il n'y a pas de lignes trouvées, le nom d'utilisateur n'existe pas
     }
+
+
 
     public static List<Message> getMessagesForUser(int userId) throws SQLException {
         List<Message> messages = new ArrayList<>();
@@ -139,11 +142,19 @@ public class DatabaseManager {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
+                } else {
+                    // Agrega un registro (log) para indicar que el usuario no fue encontrado en la base de datos
+                    LOG.warning("User with username " + username + " not found in the database");
+                    throw new SQLException("User with username " + username + " not found");
                 }
             }
+        } catch (SQLException e) {
+            // Maneja la excepción y registra (log) el error
+            LOG.severe("Error while fetching user ID for username " + username + ": " + e.getMessage());
+            throw e;
         }
-        throw new SQLException("Le nom d'utilisateur" + username + "n'existe pas");
     }
+
 
     public static String getUserNameById(int userId) throws SQLException {
         String query = "SELECT nom_utilisateur FROM Utilisateurs WHERE id = ?";
