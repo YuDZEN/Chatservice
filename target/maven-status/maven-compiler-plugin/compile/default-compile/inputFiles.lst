@@ -1,16 +1,16 @@
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\common\db\DatabaseManager.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\test\TestDatabaseConnection.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\ServerException.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\PacketProcessor.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\client\ClientMsg.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\ChatSession.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\RegisterDialog.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\client\ChatWindow.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\UserMsg.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\client\Message.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\GroupMsg.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\common\Packet.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\client\MessageListener.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\ServerMsg.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\client\ConnectionListener.java
-C:\Users\alain\Desktop\Projet 2 Prog S8 TP chat service\chatservice\src\main\java\fr\uga\miashs\dciss\chatservice\server\ServerPacketProcessor.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/PacketProcessor.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/common/Packet.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/UserMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ClientMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/test/TestDatabaseConnection.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/GroupMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/RegisterDialog.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/Message.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerMsg.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerPacketProcessor.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ConnectionListener.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/common/db/DatabaseManager.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/MessageListener.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ChatSession.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerException.java
+/Users/mariselaflores/Desktop/chatservice/src/main/java/fr/uga/miashs/dciss/chatservice/client/ChatWindow.java

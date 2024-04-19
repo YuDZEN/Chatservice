@@ -60,7 +60,6 @@ public class ChatSession extends JFrame {
                     JOptionPane.showMessageDialog(ChatSession.this, "Veuillez entrer un nom d'utilisateur et un mot de passe.");
                     return;
                 }
-
                 try {
                     // Vérifier les identifiants de l'utilisateur
                     if(DatabaseManager.verifyCredentials(username, password)) {
@@ -68,7 +67,7 @@ public class ChatSession extends JFrame {
                         int userid = DatabaseManager.getUserIdByUsername(username); // Obtenir l'ID utilisateur
 
                         JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
-                        ClientMsg client = new ClientMsg(userid,"localhost", 1666); // Création du client
+                        ClientMsg client = new ClientMsg(username,"localhost", 1666); // Création du client
                         client.startSession(); // Initialisation de la session
                         ChatWindow chatWindow = new ChatWindow(username, client); // Créer la fenêtre de chat avec l’ID utilisateur
                         chatWindow.setVisible(true);

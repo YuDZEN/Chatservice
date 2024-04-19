@@ -94,26 +94,36 @@ public class UserMsg implements PacketProcessor{
 	}
 
 	// boucle d'envoie
+	// boucle d'envoie
 	public void receiveLoop() {
 		try {
 			DataInputStream dis = new DataInputStream(s.getInputStream());
-			// tant que la connexion n'est pas terminée
-			while (active && ! s.isInputShutdown()) {
-				// on lit les paquets envoyé par le client
+			while (active && !s.isInputShutdown()) {
 				int destId = dis.readInt();
 				int length = dis.readInt();
 				byte[] content = new byte[length];
 				dis.readFully(content);
-				// on envoie le paquet à ServerMsg pour qu'il le gère
-				server.processPacket(new Packet(userId,destId,content));
-			}
 
+				if (destId <= 0) {
+					LOG.warning("Invalid destination ID: " + destId);
+					continue; // Salta el procesamiento adicional para este paquete
+				}
+
+				UserMsg recipient = server.getUser(destId);
+				if (recipient != null) {
+					server.processPacket(new Packet(userId, destId, content));
+				} else {
+					LOG.warning("User with ID " + destId + " not found.");
+					// Considera enviar una notificación de error al remitente aquí
+				}
+			}
 		} catch (IOException e) {
-			// problem in reading, probably end connection
-			LOG.warning("Connection with client "+userId+" is broken...close it.");
+			LOG.warning("Connection with client " + userId + " is broken...close it.");
 		}
 		close();
 	}
+
+
 
 	// boucle d'envoi
 	public void sendLoop() {
@@ -141,7 +151,7 @@ public class UserMsg implements PacketProcessor{
 		} catch (InterruptedException e) {
 			throw new ServerException("Sending loop thread of "+userId+" has been interrupted.",e);
 		}
-		close();
+		//close();
 	}
 
 	/**

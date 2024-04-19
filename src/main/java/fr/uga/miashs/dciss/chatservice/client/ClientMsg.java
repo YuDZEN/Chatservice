@@ -14,18 +14,22 @@ package fr.uga.miashs.dciss.chatservice.client;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
+
 
 import fr.uga.miashs.dciss.chatservice.common.Packet;
+import fr.uga.miashs.dciss.chatservice.common.db.DatabaseManager;
 
 
 /**
  * Manages the connection to a ServerMsg. Method startSession() is used to
- * establish the connection. Then messages can be send by a call to sendPacket.
+ * establish the connection. Then messages can be sent by a call to sendPacket.
  * The reception is done asynchronously (internally by the method receiveLoop())
- * and the reception of a message is notified to MessagesListeners. To register
- * a MessageListener, the method addMessageListener has to be called. Session
- * are closed thanks to the method closeSession().
+ * and the reception of a message is notified to MessageListeners. To register
+ * a MessageListener, the method addMessageListener has to be called. Sessions
+ * are closed using the method closeSession().
  */
 public class ClientMsg {
 
@@ -40,44 +44,32 @@ public class ClientMsg {
 
 	private List<MessageListener> mListeners;
 	private List<ConnectionListener> cListeners;
+	private String username;
 
 	/**
-	 * Create a client with an existing id, that will connect to the server at the
-	 * given address and port
-	 * 
-	 * @param id      The client id
-	 * @param address The server address or hostname
-	 * @param port    The port number
+	 * Create a client with an existing ID, that will connect to the server at the
+	 * given address and port.
+	 *
+	 * @param username The username of the client
+	 * @param address  The server address or hostname
+	 * @param port     The port number
 	 */
-	public ClientMsg(int id, String address, int port) {
-		if (id < 0)
-			throw new IllegalArgumentException("id must not be less than 0");
+	public ClientMsg(String username, String address, int port) {
 		if (port <= 0)
 			throw new IllegalArgumentException("Server port must be greater than 0");
-		this.identifier = id;	
+
+		this.username = username;
 		serverAddress = address;
 		serverPort = port;
-		// identifier = id;
 		mListeners = new ArrayList<>();
 		cListeners = new ArrayList<>();
 	}
 
 	/**
-	 * Create a client without id, the server will provide an id during the the
-	 * session start
-	 * 
-	 * @param address The server address or hostname
-	 * @param port    The port number
-	 */
-	public ClientMsg(String address, int port) {
-		this(0, address, port);
-	}
-
-	/**
 	 * Register a MessageListener to the client. It will be notified each time a
 	 * message is received.
-	 * 
-	 * @param l
+	 *
+	 * @param l The MessageListener to register
 	 */
 	public void addMessageListener(MessageListener l) {
 		if (l != null)
@@ -86,11 +78,11 @@ public class ClientMsg {
 	protected void notifyMessageListeners(Packet p) {
 		mListeners.forEach(x -> x.messageReceived(p));
 	}
-	
+
 	/**
-	 * Register a ConnectionListener to the client. It will be notified if the connection  start or ends.
-	 * 
-	 * @param l
+	 * Register a ConnectionListener to the client. It will be notified if the connection starts or ends.
+	 *
+	 * @param l The ConnectionListener to register
 	 */
 	public void addConnectionListener(ConnectionListener l) {
 		if (l != null)
@@ -100,23 +92,32 @@ public class ClientMsg {
 		cListeners.forEach(x -> x.connectionEvent(active));
 	}
 
-
 	public int getIdentifier() {
 		return identifier;
 	}
 
 	/**
 	 * Method to be called to establish the connection.
-	 * 
-	 * @throws UnknownHostException
-	 * @throws IOException
 	 */
-	public void startSession() throws UnknownHostException {
+	/**
+	 * Method to be called to establish the connection.
+	 */
+	public void startSession() {
 		if (s == null || s.isClosed()) {
 			try {
 				s = new Socket(serverAddress, serverPort);
 				dos = new DataOutputStream(s.getOutputStream());
 				dis = new DataInputStream(s.getInputStream());
+
+				// obtain the identifier from the database
+				try {
+					identifier = DatabaseManager.getUserIdByUsername(username);
+				} catch (SQLException e) {
+					e.printStackTrace();
+					// handle the exception, for example by logging it and returning
+					return;
+				}
+
 				dos.writeInt(identifier);
 				dos.flush();
 				System.out.println(this.identifier);
@@ -126,6 +127,14 @@ public class ClientMsg {
 				// start the receive loop
 				new Thread(() -> receiveLoop()).start();
 				notifyConnectionListeners(true);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+				// handle UnknownHostException, for example by logging it and returning
+				return;
+			} catch (EOFException e) {
+				// handle EOFException
+				e.printStackTrace();
+				closeSession();
 			} catch (IOException e) {
 				e.printStackTrace();
 				// error, close session
@@ -134,11 +143,13 @@ public class ClientMsg {
 		}
 	}
 
+
+
 	/**
-	 * Send a packet to the specified destination (etiher a userId or groupId)
-	 * 
-	 * @param destId the destinatiion id
-	 * @param data   the data to be sent
+	 * Send a packet to the specified destination (either a userId or groupId).
+	 *
+	 * @param destId The destination ID
+	 * @param data   The data to be sent
 	 */
 	public void sendPacket(int destId, byte[] data) {
 		try {
@@ -149,105 +160,71 @@ public class ClientMsg {
 				dos.flush();
 			}
 		} catch (IOException e) {
-			// error, connection closed
+			// Error occurred, connection closed
 			closeSession();
 		}
-		
 	}
 
-
 	/**
-	 * Start the receive loop. Has to be called only once.
+	 * Start the receive loop. This method has to be called only once.
 	 */
 	private void receiveLoop() {
 		try {
 			while (s != null && !s.isClosed()) {
-
 				int sender = dis.readInt();
 				int dest = dis.readInt();
 				int length = dis.readInt();
 				byte[] data = new byte[length];
 				dis.readFully(data);
 				notifyMessageListeners(new Packet(sender, dest, data));
-
 			}
 		} catch (IOException e) {
-			// error, connection closed
+			// Error occurred, connection closed
 		}
 		closeSession();
 	}
 
+	/**
+	 * Close the session.
+	 */
 	public void closeSession() {
 		try {
 			if (s != null)
 				s.close();
 		} catch (IOException e) {
+			// Error occurred while closing the session
 		}
 		s = null;
 		notifyConnectionListeners(false);
 	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-		ClientMsg c = new ClientMsg("localhost", 1666);
+		ClientMsg c = new ClientMsg("username", "localhost", 1666);
 
-		// add a dummy listener that print the content of message as a string
+		// Add a dummy listener that prints the content of a message as a string
 		c.addMessageListener(p -> System.out.println(p.srcId + " says to " + p.destId + ": " + new String(p.data)));
-		
-		// add a connection listener that exit application when connection closed
-		c.addConnectionListener(active ->  {if (!active) System.exit(0);});
+
+		// Add a connection listener that exits the application when the connection is closed
+		c.addConnectionListener(active -> { if (!active) System.exit(0); });
 
 		c.startSession();
-		System.out.println("Vous êtes : " + c.getIdentifier());
-
-		// Thread.sleep(5000);
-
-		// l'utilisateur avec id 4 crée un grp avec 1 et 3 dedans (et lui meme)
-		if (c.getIdentifier() == 4) {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			DataOutputStream dos = new DataOutputStream(bos);
-
-			// byte 1 : create group on server
-			dos.writeByte(1);
-
-			// nb members
-			dos.writeInt(2);
-			// list members
-			dos.writeInt(1);
-			dos.writeInt(3);
-			dos.flush();
-
-			c.sendPacket(0, bos.toByteArray());
-
-		}
-		
-		
+		System.out.println("Your identifier: " + c.getIdentifier());
 
 		Scanner sc = new Scanner(System.in);
 		String lu = null;
 		while (!"\\quit".equals(lu)) {
 			try {
-				System.out.println("A qui voulez vous écrire ? ");
+				System.out.println("Whom do you want to write to? ");
 				int dest = Integer.parseInt(sc.nextLine());
 
-				System.out.println("Votre message ? ");
+				System.out.println("Your message? ");
 				lu = sc.nextLine();
 				c.sendPacket(dest, lu.getBytes());
 			} catch (InputMismatchException | NumberFormatException e) {
-				System.out.println("Mauvais format");
+				System.out.println("Invalid format");
 			}
-
 		}
 
-		/*
-		 * int id =1+(c.getIdentifier()-1) % 2; System.out.println("send to "+id);
-		 * c.sendPacket(id, "bonjour".getBytes());
-		 * 
-		 * 
-		 * Thread.sleep(10000);
-		 */
-
 		c.closeSession();
-
 	}
-
 }
