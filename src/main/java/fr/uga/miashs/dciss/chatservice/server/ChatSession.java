@@ -53,33 +53,21 @@ public class ChatSession extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                char[] password = passwordField.getPassword();
+                login();
+            }
+        });
 
-                if (username.isEmpty() || password.length == 0) {
-                    JOptionPane.showMessageDialog(ChatSession.this, "Veuillez entrer un nom d'utilisateur et un mot de passe.");
-                    return;
-                }
-                try {
-                    // Vérifier les identifiants de l'utilisateur
-                    if(DatabaseManager.verifyCredentials(username, password)) {
+        passwordField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                login();
+            }
+        });
 
-                        int userid = DatabaseManager.getUserIdByUsername(username); // Obtenir l'ID utilisateur
-
-                        JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
-                        ClientMsg client = new ClientMsg(username,"localhost", 1666); // Création du client
-                        client.startSession(); // Initialisation de la session
-                        dispose(); // Fermer la fenêtre de connexion
-                        ChatWindow chatWindow = new ChatWindow(username, client); // Créer la fenêtre de chat avec l’ID utilisateur
-                        chatWindow.setVisible(true);
-                    } else {
-                        // Informer l'utilisateur que les identifiants sont incorrects
-                        JOptionPane.showMessageDialog(ChatSession.this, "Nom d'utilisateur ou mot de passe incorrect.");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");
-                }
+        usernameField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                login();
             }
         });
 
@@ -102,6 +90,34 @@ public class ChatSession extends JFrame {
 
         add(loginPanel, BorderLayout.CENTER);
         add(new JLabel("Bienvenue sur Chat Service", SwingConstants.CENTER), BorderLayout.NORTH); // Centrer le texte
+    }
+
+    private void login() {
+        String username = usernameField.getText();
+        char[] password = passwordField.getPassword();
+
+        if (username.isEmpty() || password.length == 0) {
+            JOptionPane.showMessageDialog(ChatSession.this, "Veuillez entrer un nom d'utilisateur et un mot de passe.");
+            return;
+        }
+        try {
+            // Vérifier les identifiants de l'utilisateur
+            if(DatabaseManager.verifyCredentials(username, password)) {
+
+            int userid = DatabaseManager.getUserIdByUsername(username); // Obtenir l'ID utilisateur
+            JOptionPane.showMessageDialog(ChatSession.this, "Connecté avec succès!");
+            ClientMsg client = new ClientMsg(username,"localhost", 1666); // Création du client
+            client.startSession(); // Initialisation de la session
+            ChatWindow chatWindow = new ChatWindow(username, client); // Créer la fenêtre de chat avec l’ID utilisateur
+            chatWindow.setVisible(true);
+            } else {
+                // Informer l'utilisateur que les identifiants sont incorrects
+                JOptionPane.showMessageDialog(ChatSession.this, "Nom d'utilisateur ou mot de passe incorrect.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+                    JOptionPane.showMessageDialog(ChatSession.this, "Erreur d’obtention de l’ID utilisateur. Réessayez.");
+        }
     }
 
     public static void main(String[] args) {
