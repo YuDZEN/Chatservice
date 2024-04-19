@@ -1,0 +1,15 @@
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/ChatSession.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/UserMsg.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/client/ClientMsg.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/client/ChatWindow.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/RegisterDialog.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/client/ConnectionListener.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/PacketProcessor.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/GroupMsg.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerMsg.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/client/MessageListener.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/test/TestDatabaseConnection.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/common/db/DatabaseManager.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/common/Packet.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerPacketProcessor.java
+/Users/chizhang/Downloads/chatservice-Anthony/src/main/java/fr/uga/miashs/dciss/chatservice/server/ServerException.java
