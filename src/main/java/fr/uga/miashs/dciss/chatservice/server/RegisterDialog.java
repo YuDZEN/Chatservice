@@ -42,50 +42,30 @@ public class RegisterDialog extends JDialog {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                char[] password = passwordField.getPassword();
-                String email = emailField.getText();
-
-                // Validation des données
-                if (username.isEmpty() || password.length == 0 || email.isEmpty()) {
-                    JOptionPane.showMessageDialog(RegisterDialog.this, "Veuillez remplir tous les champs.");
-                    return; // Arrête le processus d'inscription si les champs sont vides
-                }
-
-                // Hacher le mot de passe
-                String hashedPassword = DatabaseManager.hashPassword(password);
-
-                // Autres validations (vous pouvez en ajouter plus selon vos besoins)
-                try {
-                    // Vérifier si le nom d'utilisateur existe déjà
-                    if (DatabaseManager.usernameExists(username)) {
-                        // Informer l'utilisateur que le nom d'utilisateur est déjà pris
-                        JOptionPane.showMessageDialog(RegisterDialog.this, "Le nom d'utilisateur est déjà pris. Veuillez choisir un autre nom d'utilisateur.");
-                    } else {
-                        // Construire la requête SQL d'insertion
-                        String insertQuery = "INSERT INTO Utilisateurs (nom_utilisateur, mot_de_passe_hash, email) VALUES (?, ?, ?)";
-                
-                        // Exécuter la requête SQL
-                        int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, hashedPassword, email);
-                
-                        if (rowsAffected > 0) {
-                            // Enregistrement réussi
-                            JOptionPane.showMessageDialog(RegisterDialog.this, "Enregistrement réussi !");
-                            dispose(); // Ferme la boîte de dialogue
-                        } else {
-                            // Échec de l'enregistrement
-                            JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
-                        }
-                    }
-                } catch (SQLException ex) {
-                        // Gérer toute exception de la base de données
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
-                }
-                
+                register();
             }
         });
 
+        usernameField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                register();
+            }
+        });
+
+        passwordField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                register();
+            }
+        });
+
+        emailField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                register();
+            }
+        });
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
@@ -106,6 +86,48 @@ public class RegisterDialog extends JDialog {
         add(registerPanel);
         pack(); // Ajuste la taille de la boîte de dialogue automatiquement en fonction de son contenu
         setLocationRelativeTo(parent); // Centre la boîte de dialogue sur l'écran
+    }
+
+    private void register() {
+        String username = usernameField.getText();
+        char[] password = passwordField.getPassword();
+        String email = emailField.getText();
+
+        // Validation des données
+        if (username.isEmpty() || password.length == 0 || email.isEmpty()) {
+            JOptionPane.showMessageDialog(RegisterDialog.this, "Veuillez remplir tous les champs.");
+            return; // Arrête le processus d'inscription si les champs sont vides
+        }
+        // Hacher le mot de passe
+        String hashedPassword = DatabaseManager.hashPassword(password);
+
+        // Autres validations (vous pouvez en ajouter plus selon vos besoins)
+        try {
+            // Vérifier si le nom d'utilisateur existe déjà
+            if (DatabaseManager.usernameExists(username)) {
+                // Informer l'utilisateur que le nom d'utilisateur est déjà pris
+                JOptionPane.showMessageDialog(RegisterDialog.this, "Le nom d'utilisateur est déjà pris. Veuillez choisir un autre nom d'utilisateur.");
+            } else {
+                // Construire la requête SQL d'insertion
+                String insertQuery = "INSERT INTO Utilisateurs (nom_utilisateur, mot_de_passe_hash, email) VALUES (?, ?, ?)";
+                
+                // Exécuter la requête SQL
+                int rowsAffected = DatabaseManager.executeUpdate(insertQuery, username, hashedPassword, email);
+                
+                if (rowsAffected > 0) {
+                    // Enregistrement réussi
+                    JOptionPane.showMessageDialog(RegisterDialog.this, "Enregistrement réussi !");
+                    dispose(); // Ferme la boîte de dialogue
+                } else {
+                    // Échec de l'enregistrement
+                    JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
+                }
+            }
+        } catch (SQLException ex) {
+                // Gérer toute exception de la base de données
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(RegisterDialog.this, "Erreur lors de l'enregistrement de l'utilisateur. Essayez à nouveau.");
+        }
     }
 }
 
