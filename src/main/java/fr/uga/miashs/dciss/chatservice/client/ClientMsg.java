@@ -54,13 +54,10 @@ public class ClientMsg {
 			throw new IllegalArgumentException("id must not be less than 0");
 		if (port <= 0)
 			throw new IllegalArgumentException("Server port must be greater than 0");
-
-
-
 		this.identifier = id;	
 		serverAddress = address;
 		serverPort = port;
-		identifier = id;
+		// identifier = id;
 		mListeners = new ArrayList<>();
 		cListeners = new ArrayList<>();
 	}

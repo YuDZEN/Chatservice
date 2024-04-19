@@ -13,19 +13,41 @@ Maven
 
 ### Installation
 
-1.  Clone the repo
-   ```sh
+1. Clone the repo
+```sh
    git clone 
-   ```
+```
 2. Compile/build
-   ```sh
+ ```sh
    mvn package
-   ```
+```
    
-Clean the project
-   ```sh
+3. Clean the project
+```sh
    mvn clean
-   ```
+```
+
+4. Remove the correct ligns in the file pom.xml, either these ones below or the other ones depending on your version
+```xml
+   <dependency>
+      <groupId>mysql</groupId>
+     	<artifactId>mysql-connector-java</artifactId>
+      <version>8.0.28</version>
+   </dependency>
+
+   <!-- https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
+		
+   <dependency>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.4</version>
+   </dependency>
+```
+
+5. Change this lign in DatabaseManager.java if you can't name your DB with Upper Case characters :
+```java
+   private static final String DB_URL = "jdbc:mysql://localhost/chat_service";
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -74,6 +96,3 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 * []()
 * []()
 * []()
-
-
-
