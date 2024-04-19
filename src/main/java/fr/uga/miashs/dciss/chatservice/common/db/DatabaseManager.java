@@ -27,7 +27,7 @@ import fr.uga.miashs.dciss.chatservice.client.ChatWindow;
 public class DatabaseManager {
     private static final Logger LOG = Logger.getLogger(DatabaseManager.class.getName());
     private static final String DB_URL = "jdbc:mysql://localhost/Chat_Service";
-    private static final String USER = "AdminChat";
+    private static final String USER = "root";
     private static final String PASSWORD = null;
 
     // Método para establecer una conexión con la base de datos
