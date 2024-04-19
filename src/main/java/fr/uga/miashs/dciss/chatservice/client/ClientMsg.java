@@ -120,7 +120,6 @@ public class ClientMsg {
 
 				dos.writeInt(identifier);
 				dos.flush();
-
 				System.out.println(this.identifier);
 				if (identifier == 0) {
 					identifier = dis.readInt();

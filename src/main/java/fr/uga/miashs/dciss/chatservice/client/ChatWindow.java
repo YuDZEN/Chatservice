@@ -84,24 +84,14 @@ public class ChatWindow extends JFrame {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String message = messageField.getText();
-                String selectedUser = (String) userComboBox.getSelectedItem(); // Obtener el usuario seleccionado
-                if (selectedUser != null) {
-                    // Aquí necesitarás obtener el ID del usuario seleccionado
-                    // luego enviar el mensaje al servidor y guardar en la base de datos
-                    // Supongamos que obtienes el ID del usuario seleccionado en selectedUserId
-                    int selectedUserId = getUserIdByName(selectedUser); // Corregir el nombre del método
-                    client.sendPacket(selectedUserId, message.getBytes());
-                    System.out.println("Message sent to " + selectedUser + ": " + message);
-                    appendMessage("You", message);
+                sendMessage();
+            }
+        });
 
-                    saveMessage(userId, selectedUserId, message);
-                    System.out.println(userId + " " + selectedUserId + " " + message);
-                    System.out.println("Message saved in the database.");
-                    messageField.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(ChatWindow.this, "Please select a user to send message.");
-                }
+        messageField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
             }
         });
 
@@ -146,6 +136,27 @@ public class ChatWindow extends JFrame {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendMessage() {
+        String message = messageField.getText();
+        String selectedUser = (String) userComboBox.getSelectedItem(); // Obtener el usuario seleccionado
+        if (selectedUser != null) {
+            // Aquí necesitarás obtener el ID del usuario seleccionado
+            // luego enviar el mensaje al servidor y guardar en la base de datos
+            // Supongamos que obtienes el ID del usuario seleccionado en selectedUserId
+            int selectedUserId = getUserIdByName(selectedUser); // Corregir el nombre del método
+            client.sendPacket(selectedUserId, message.getBytes());
+            System.out.println("Message sent to " + selectedUser + ": " + message);
+            appendMessage("You", message);
+    
+            saveMessage(userId, selectedUserId, message);
+            System.out.println(userId + " " + selectedUserId + " " + message);
+            System.out.println("Message saved in the database.");
+            messageField.setText("");
+        } else {
+            JOptionPane.showMessageDialog(ChatWindow.this, "Please select a user to send message.");
         }
     }
 
