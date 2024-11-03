@@ -1,6 +1,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+Travail de groupe de MIAHS-DCISS UGA 2024 
 DcissApp messenger service
 
 <!-- GETTING STARTED -->
